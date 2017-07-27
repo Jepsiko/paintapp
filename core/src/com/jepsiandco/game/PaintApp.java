@@ -9,8 +9,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
+
+import java.util.Iterator;
 
 public class PaintApp extends ApplicationAdapter {
     private OrthographicCamera camera;
@@ -21,11 +26,13 @@ public class PaintApp extends ApplicationAdapter {
 	private Sound dropSound;
 	private Music rainMusic;
 
-	// Shapes
+	// Objects
     private Rectangle bucket;
+    private Array<Rectangle> raindrops;
 
     // Other Variables
     private Vector3 touchPos;
+    private long lastDropTime;
 	
 	@Override
 	public void create () {
@@ -56,6 +63,8 @@ public class PaintApp extends ApplicationAdapter {
 
         // Instantiate other variables
         touchPos = new Vector3();
+        raindrops = new Array<Rectangle>();
+        spawnRaindrop();
 	}
 
 	@Override
@@ -68,22 +77,59 @@ public class PaintApp extends ApplicationAdapter {
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
 		batch.draw(bucketImage, bucket.x, bucket.y);
+		for (Rectangle raindrop : raindrops) {
+		    batch.draw(dropImage, raindrop.x, raindrop.y);
+        }
 		batch.end();
 
+		// Move the bucket with the touch or the mouse
 		if (Gdx.input.isTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
             bucket.x = touchPos.x - 64 / 2;
         }
 
+        // Move the bucket with the keyboard
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) bucket.x -= 200 * Gdx.graphics.getDeltaTime();
 		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) bucket.x += 200 * Gdx.graphics.getDeltaTime();
 
+		// Keep the bucket inside the screen
 		if (bucket.x < 0) bucket.x = 0;
 		if (bucket.x > 800 - 64) bucket.x = 800 - 64;
+
+		// Create a new raindrop if enough time passed
+        if (TimeUtils.nanoTime() - lastDropTime > 1000000000) spawnRaindrop();
+
+        Iterator<Rectangle> iter = raindrops.iterator();
+        while (iter.hasNext()) {
+            Rectangle raindrop = iter.next();
+
+            // Move the raindrops
+            raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
+            if (raindrop.y + 64 < 0) iter.remove();
+
+            // Check collision between a raindrop and the bucket
+            if (raindrop.overlaps(bucket)) {
+                dropSound.play();
+                iter.remove();
+            }
+        }
 	}
 	
 	@Override
 	public void dispose () {
 	}
+
+    /**
+     * Spawn a raindrop at a random 'x' and add it to the raindrops array
+     */
+    private void spawnRaindrop() {
+	    Rectangle raindrop = new Rectangle();
+	    raindrop.x = MathUtils.random(0, 800-64);
+	    raindrop.y = 480;
+	    raindrop.width = 64;
+	    raindrop.height = 64;
+	    raindrops.add(raindrop);
+	    lastDropTime = TimeUtils.nanoTime();
+    }
 }
