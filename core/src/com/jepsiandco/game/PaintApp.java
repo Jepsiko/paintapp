@@ -5,15 +5,27 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class PaintApp extends ApplicationAdapter {
+    private OrthographicCamera camera;
+    private SpriteBatch batch;
+
+    // Assets
 	private Texture dropImage, bucketImage;
 	private Sound dropSound;
 	private Music rainMusic;
 	
 	@Override
 	public void create () {
+
+        // Create the camera and batch
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 800, 480);
+        batch = new SpriteBatch();
+
 	    // Load the images for the droplet and the bucket, 64x64 pixels each
 		dropImage = new Texture("droplet.png");
 		bucketImage = new Texture("bucket.png");
