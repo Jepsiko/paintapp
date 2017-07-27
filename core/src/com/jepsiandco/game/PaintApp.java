@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.awt.*;
+
 public class PaintApp extends ApplicationAdapter {
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -17,6 +19,9 @@ public class PaintApp extends ApplicationAdapter {
 	private Texture dropImage, bucketImage;
 	private Sound dropSound;
 	private Music rainMusic;
+
+	// Shapes
+    private Rectangle bucket;
 	
 	@Override
 	public void create () {
@@ -37,6 +42,13 @@ public class PaintApp extends ApplicationAdapter {
         // Start the playback of the background music immediately
         rainMusic.setLooping(true);
         rainMusic.play();
+
+        // Create the bucket
+        bucket = new Rectangle();
+        bucket.x = 800 / 2 - 64 / 2;
+        bucket.y = 20;
+        bucket.width = 64;
+        bucket.height = 64;
 	}
 
 	@Override
