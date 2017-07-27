@@ -33,6 +33,7 @@ public class GameScreen implements Screen {
 
     GameScreen(final PaintApp game) {
         this.game = game;
+        this.game.gameScreen = this;
 
         // load the images for the droplet and the bucket, 64x64 pixels each
         dropImage = new Texture(Gdx.files.internal("droplet.png"));

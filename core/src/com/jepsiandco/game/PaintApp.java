@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class PaintApp extends Game {
-    public SpriteBatch batch;
-    public BitmapFont font;
+    SpriteBatch batch;
+    BitmapFont font;
+
+    GameScreen gameScreen;
 	
 	@Override
 	public void create () {
@@ -23,5 +25,6 @@ public class PaintApp extends Game {
 	@Override
 	public void dispose () {
 	    batch.dispose();
+	    gameScreen.dispose();
 	}
 }
