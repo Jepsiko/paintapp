@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 
 public class PaintApp extends ApplicationAdapter {
     private OrthographicCamera camera;
@@ -21,6 +22,9 @@ public class PaintApp extends ApplicationAdapter {
 
 	// Shapes
     private Rectangle bucket;
+
+    // Other Variables
+    private Vector3 touchPos;
 	
 	@Override
 	public void create () {
@@ -48,6 +52,9 @@ public class PaintApp extends ApplicationAdapter {
         bucket.y = 20;
         bucket.width = 64;
         bucket.height = 64;
+
+        // Instantiate other variables
+        touchPos = new Vector3();
 	}
 
 	@Override
@@ -61,6 +68,12 @@ public class PaintApp extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(bucketImage, bucket.x, bucket.y);
 		batch.end();
+
+		if (Gdx.input.isTouched()) {
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+            bucket.x = touchPos.x - 64 / 2;
+        }
 	}
 	
 	@Override
