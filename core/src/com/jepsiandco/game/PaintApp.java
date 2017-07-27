@@ -77,7 +77,7 @@ public class PaintApp extends ApplicationAdapter {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) bucket.x -= 200 * Gdx.graphics.getDeltaTime();
-		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) bucket.y += 200 * Gdx.graphics.getDeltaTime();
+		if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) bucket.x += 200 * Gdx.graphics.getDeltaTime();
 
 		if (bucket.x < 0) bucket.x = 0;
 		if (bucket.x > 800 - 64) bucket.x = 800 - 64;
