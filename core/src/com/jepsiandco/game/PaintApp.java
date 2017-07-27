@@ -8,8 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.awt.*;
+import com.badlogic.gdx.math.Rectangle;
 
 public class PaintApp extends ApplicationAdapter {
     private OrthographicCamera camera;
@@ -53,8 +52,15 @@ public class PaintApp extends ApplicationAdapter {
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		camera.update();
+
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		batch.draw(bucketImage, bucket.x, bucket.y);
+		batch.end();
 	}
 	
 	@Override
