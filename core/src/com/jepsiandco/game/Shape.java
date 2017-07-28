@@ -8,17 +8,19 @@ import java.util.Iterator;
 
 class Shape {
 
-    private Array<Vector3> line;
+    private Array<Vector3> shape;
 
     private float x;
     private float y;
     private float width;
     private float height;
 
+    private static final int closeShapeThreashold = 20;
+
     Shape (Array<Vector3> line) {
-        this.line = new Array<Vector3>();
+        shape = new Array<Vector3>();
         for (Vector3 point : line) {
-            this.line.add(new Vector3(point.x, point.y, point.z));
+            shape.add(new Vector3(point.x, point.y, point.z));
         }
 
         x = line.first().x;
@@ -48,10 +50,17 @@ class Shape {
         y -= margin;
         width += margin *2;
         height += margin *2;
+
+        if (shape.first().dst(shape.peek()) <= closeShapeThreashold)
+            shape.add(new Vector3(shape.first().x, shape.first().y, 0));
     }
 
     static void drawShape(Array<Vector3> shape, ShapeRenderer shapeRenderer) {
+
+        if (shape.size == 0) return;
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        shapeRenderer.setColor(0, 0, 0, 1);
         Iterator<Vector3> iter = shape.iterator();
         Vector3 previous = shape.first();
         Vector3 current;
@@ -67,10 +76,11 @@ class Shape {
     }
 
     void render(ShapeRenderer shapeRenderer) {
-        drawShape(line, shapeRenderer);
+        drawShape(shape, shapeRenderer);
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.rect(x, y, width, height);
+        shapeRenderer.setColor(0, 1, 0, 1);
+        //shapeRenderer.rect(x, y, width, height);
         shapeRenderer.end();
     }
 }

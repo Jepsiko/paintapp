@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -16,6 +18,8 @@ public class PaintApp extends ApplicationAdapter {
     private Array<Shape> shapes;
     private Array<Vector3> currentShape;
     private Vector3 currentPoint;
+    private final int marginBetweenPoint = 4;
+    private Rectangle marginRectangle;
     private boolean drawingShape = false;
 	
 	@Override
@@ -23,11 +27,14 @@ public class PaintApp extends ApplicationAdapter {
 	    camera = new OrthographicCamera();
 	    camera.setToOrtho(false, 480, 800);
 	    shapeRenderer = new ShapeRenderer();
-	    shapeRenderer.setColor(0, 0, 0, 1);
 
 	    shapes = new Array<Shape>();
 		currentShape = new Array<Vector3>();
-		currentPoint = new Vector3();
+		currentPoint = new Vector3(-1, -1, -1); // Flag value
+        marginRectangle = new Rectangle(currentPoint.x-marginBetweenPoint,
+                                        currentPoint.y-marginBetweenPoint,
+                                        marginBetweenPoint*2,
+                                        marginBetweenPoint*2);
 	}
 
 	@Override
@@ -53,10 +60,16 @@ public class PaintApp extends ApplicationAdapter {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
 
-            if (touchPos.x != currentPoint.x || touchPos.y != currentPoint.y) {
+
+
+            if (!marginRectangle.contains(new Vector2(touchPos.x, touchPos.y))) {
                 currentShape.add(touchPos);
                 currentPoint.x = touchPos.x;
                 currentPoint.y = touchPos.y;
+                marginRectangle = new Rectangle(currentPoint.x-marginBetweenPoint,
+                                                currentPoint.y-marginBetweenPoint,
+                                                marginBetweenPoint*2,
+                                                marginBetweenPoint*2);
             }
 
         } else {
@@ -64,7 +77,6 @@ public class PaintApp extends ApplicationAdapter {
                 drawingShape = false;
 
                 // Save the shape
-                System.out.println("New Shape created");
                 shapes.add(new Shape(currentShape));
                 currentShape.clear();
             }
@@ -73,5 +85,6 @@ public class PaintApp extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
+	    shapeRenderer.dispose();
 	}
 }
