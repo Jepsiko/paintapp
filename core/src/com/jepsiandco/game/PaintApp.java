@@ -7,15 +7,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 
 public class PaintApp extends ApplicationAdapter {
 
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
 
-    private Array<Shape> shapes;
-    private Shape currentShape;
+    private Shape shape;
     private Vector3 currentPoint;
     private boolean drawingShape = false;
 	
@@ -25,8 +23,7 @@ public class PaintApp extends ApplicationAdapter {
 	    camera.setToOrtho(false, 480, 800);
 	    shapeRenderer = new ShapeRenderer();
 
-	    shapes = new Array<Shape>();
-		currentShape = new Shape();
+		shape = new Shape();
 		currentPoint = new Vector3();
 	}
 
@@ -38,51 +35,30 @@ public class PaintApp extends ApplicationAdapter {
 		camera.update();
         shapeRenderer.setProjectionMatrix(camera.combined);
 
-        if (drawingShape) {
-            currentShape.render(shapeRenderer);
-        }
-
-        for (Shape shape : shapes) {
-            shape.render(shapeRenderer);
-        }
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 0, 1, 1);
-        shapeRenderer.rect(0, 750, 480, 50);
-        shapeRenderer.end();
+        shape.render(shapeRenderer);
 
         Vector3 touchPos = new Vector3();
         if (Gdx.input.isTouched()) {
-            drawingShape = true;
+            if (!drawingShape) {
+                drawingShape = true;
+                shape.clear();
+            }
 
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
 
-            if (750 <= touchPos.y && touchPos.y <= 800) clear();
-
             if (touchPos.x != currentPoint.x || touchPos.y != currentPoint.y) {
-                currentShape.addPoint(touchPos);
+                shape.addPoint(touchPos);
                 currentPoint.x = touchPos.x;
                 currentPoint.y = touchPos.y;
             }
 
         } else {
-            if (drawingShape && currentShape.getSize() != 0) {
+            if (drawingShape && shape.getSize() != 0) {
                 drawingShape = false;
-
-                // Save the shape
-                shapes.add(new Shape(currentShape));
-                currentShape.clear();
             }
         }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) clear();
 	}
-
-	private void clear () {
-	    shapes.clear();
-	    currentShape.clear();
-    }
 	
 	@Override
 	public void dispose () {
