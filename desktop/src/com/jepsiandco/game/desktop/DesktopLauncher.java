@@ -9,8 +9,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
 		config.title = "PaintApp";
-		config.width = 1280;
-		config.height = 720;
+		config.width = 480;
+		config.height = 800;
 
 		new LwjglApplication(new PaintApp(), config);
 	}
