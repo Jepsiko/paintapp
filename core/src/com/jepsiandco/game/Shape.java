@@ -1,5 +1,6 @@
 package com.jepsiandco.game;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
@@ -11,9 +12,12 @@ class Shape {
     private Array<Vector3> shape;
     private static final float minDistBetweenPoints = 20;
     private static final int iterations = 2;
-    private static final int thickness = 7;
-    private static final int minThickness = 3;
-    private static final int maxSize = 30;
+
+    private static final int minThickness = 1;
+    private static final int thickness = 4;
+    private static final int strokeThickness = 3;
+
+    private static final int maxSize = 40;
 
     Shape () {
         shape = new Array<Vector3>();
@@ -80,32 +84,49 @@ class Shape {
             } while (--iters > 0);
         }
 
+        drawShape(true, outputShape, camera, renderer);
+        drawShape(false, outputShape, camera, renderer);
+    }
+
+    private static void drawShape(boolean stroke, Array<Vector3> outputShape, OrthographicCamera camera,
+                                  ImmediateModeRenderer20 renderer) {
+
+
         // Add thickness to the shape
         Array<Vector3> shapeCopy = new Array<Vector3>(outputShape);
 
-        Vector3 current;
-        Vector3 previous = shapeCopy.first();
-        int index = 1;
-        for (int i = 1; i < shapeCopy.size-1; i++) {
-            current = shapeCopy.get(i);
-            Vector3 tmp = new Vector3(current).sub(previous).nor();
-            tmp.set(-tmp.y, tmp.x, 0);
-            tmp.scl(thickness * (i / (float) shapeCopy.size) + minThickness);
+        Vector3 previous = shapeCopy.get(shapeCopy.size-2);
+        Vector3 current = shapeCopy.pop();
+        Vector3 tmp = new Vector3(current).sub(previous).scl(10).add(previous);
+        shapeCopy.add(tmp);
 
-            outputShape.removeIndex(index);
-            outputShape.insert(index, new Vector3(previous).add(tmp));
+        previous = shapeCopy.first();
+        int index = 1;
+        for (int i = 1; i < outputShape.size-1; i++) {
+            current = outputShape.get(i);
+            tmp = new Vector3(current).sub(previous).nor();
+            tmp.set(-tmp.y, tmp.x, 0);
+
+            float scalar = thickness;
+            if (stroke) scalar += strokeThickness;
+            scalar = scalar * (i / (float) outputShape.size) + minThickness;
+
+            tmp.scl(scalar);
+
+            shapeCopy.removeIndex(index);
+            shapeCopy.insert(index, new Vector3(previous).add(tmp));
             index++;
-            outputShape.insert(index, new Vector3(previous).sub(tmp));
+            shapeCopy.insert(index, new Vector3(previous).sub(tmp));
             index++;
 
             previous = current;
         }
 
         renderer.begin(camera.combined, GL20.GL_TRIANGLE_STRIP);
-        renderer.color(0, 0, 0, 1);
 
-        for (Vector3 point : outputShape) {
-
+        for (Vector3 point : shapeCopy) {
+            if (!stroke) renderer.color(1, 0, 0, 1);
+            else renderer.color(new Color(0, 0, 1, 1));
             renderer.vertex(point.x, point.y, point.z);
         }
 
