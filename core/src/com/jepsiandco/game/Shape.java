@@ -1,23 +1,22 @@
 package com.jepsiandco.game;
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-
-import java.util.Iterator;
 
 class Shape {
 
     private Array<Vector3> shape;
-    private static final float minDistBetweenPoints = 25;
+    private static final float minDistBetweenPoints = 20;
     private static final int iterations = 2;
+    private static final int thickness = 7;
+    private static final int minThickness = 3;
+    private static final int maxSize = 30;
 
     Shape () {
         shape = new Array<Vector3>();
-    }
-
-    Shape (Shape shapeToCopy) {
-        shape = new Array<Vector3>(shapeToCopy.shape);
     }
 
     int getSize () {
@@ -32,6 +31,10 @@ class Shape {
             // Simplify the path
             final float minDistanceSq = minDistBetweenPoints * minDistBetweenPoints;
             if (lenSq >= minDistanceSq) {
+                if (shape.size >= maxSize) {
+                    System.arraycopy(shape.items, 1, shape.items, 0, shape.size - 1);
+                    shape.pop();
+                }
                 shape.add(point);
             }
         }
@@ -55,7 +58,7 @@ class Shape {
         output.add(input.peek());
     }
 
-    void render (ShapeRenderer shapeRenderer) {
+    void render (OrthographicCamera camera, ImmediateModeRenderer20 renderer) {
 
         if (shape.size == 0) return;
 
@@ -77,23 +80,36 @@ class Shape {
             } while (--iters > 0);
         }
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 0, 0, 1);
+        // Add thickness to the shape
+        Array<Vector3> shapeCopy = new Array<Vector3>(outputShape);
 
-        Vector3 previous = outputShape.first();
         Vector3 current;
+        Vector3 previous = shapeCopy.first();
+        int index = 1;
+        for (int i = 1; i < shapeCopy.size-1; i++) {
+            current = shapeCopy.get(i);
+            Vector3 tmp = new Vector3(current).sub(previous).nor();
+            tmp.set(-tmp.y, tmp.x, 0);
+            tmp.scl(thickness * (i / (float) shapeCopy.size) + minThickness);
 
-        Iterator<Vector3> iter = outputShape.iterator();
-        iter.next();
-        while (iter.hasNext()) {
-            current = iter.next();
-
-            shapeRenderer.line(current, previous);
+            outputShape.removeIndex(index);
+            outputShape.insert(index, new Vector3(previous).add(tmp));
+            index++;
+            outputShape.insert(index, new Vector3(previous).sub(tmp));
+            index++;
 
             previous = current;
         }
 
-        shapeRenderer.end();
+        renderer.begin(camera.combined, GL20.GL_TRIANGLE_STRIP);
+        renderer.color(0, 0, 0, 1);
+
+        for (Vector3 point : outputShape) {
+
+            renderer.vertex(point.x, point.y, point.z);
+        }
+
+        renderer.end();
     }
 
     void clear () {

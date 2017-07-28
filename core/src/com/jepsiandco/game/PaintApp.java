@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 
@@ -12,6 +13,7 @@ public class PaintApp extends ApplicationAdapter {
 
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
+    private ImmediateModeRenderer20 renderer;
 
     private Shape shape;
     private Vector3 currentPoint;
@@ -22,6 +24,7 @@ public class PaintApp extends ApplicationAdapter {
 	    camera = new OrthographicCamera();
 	    camera.setToOrtho(false, 480, 800);
 	    shapeRenderer = new ShapeRenderer();
+        renderer = new ImmediateModeRenderer20(false, true, 1);
 
 		shape = new Shape();
 		currentPoint = new Vector3();
@@ -33,9 +36,8 @@ public class PaintApp extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		camera.update();
-        shapeRenderer.setProjectionMatrix(camera.combined);
 
-        shape.render(shapeRenderer);
+        shape.render(camera, renderer);
 
         Vector3 touchPos = new Vector3();
         if (Gdx.input.isTouched()) {
