@@ -75,6 +75,10 @@ class Shape {
         }
     }
 
+    void addPoints(Vector3[] points) {
+        for (Vector3 point : points) addPoint(point);
+    }
+
     private static void smooth(Array<Vector3> input, Array<Vector3> output) {
         output.clear();
         output.add(input.first());

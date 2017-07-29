@@ -2,7 +2,6 @@ package com.jepsiandco.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -33,11 +32,7 @@ public class PaintApp extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
 
         food = new TexturedShape("croissant.png", 300, 300);
-
-        food.addPoint(new Vector3(100, 100, 0));
-        food.addPoint(new Vector3(100, 200, 0));
-        food.addPoint(new Vector3(200, 200, 0));
-        food.addPoint(new Vector3(200, 100, 0));
+        food.addPoints(ShapesFood.croissantShape);
 
 		shape = new Shape();
 		currentPoint = new Vector3();
@@ -60,13 +55,14 @@ public class PaintApp extends ApplicationAdapter {
 
         Vector3 touchPos = new Vector3();
         if (Gdx.input.isTouched()) {
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
+
             if (!drawingShape) {
+                System.err.println("Position : (" + touchPos.x + ", " + touchPos.y + ")");
                 drawingShape = true;
                 shape.clear();
             }
-
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
 
             if (touchPos.x != currentPoint.x || touchPos.y != currentPoint.y) {
                 shape.addPoint(touchPos);
@@ -77,9 +73,14 @@ public class PaintApp extends ApplicationAdapter {
         } else {
             if (drawingShape && shape.getSize() > 0) {
                 drawingShape = false;
-                food.winAnimation();
-                food.textureAnimation();
 
+                // TODO: Test percentage of success
+                // If (success > 90%) => perfectAnimation and textureAnimation
+                // Else if (success > 75%) => winAnimation and textureAnimation
+                // Else => looseAnimation
+
+                food.looseAnimation();
+                food.textureAnimation();
             }
         }
 	}
