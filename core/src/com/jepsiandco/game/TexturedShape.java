@@ -4,9 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
-
-import java.io.File;
 
 import static java.lang.Math.min;
 
@@ -24,12 +25,11 @@ class TexturedShape extends Shape {
     private boolean looseAnimating = false;
     private boolean textureAnimating = false;
 
-    TexturedShape(String filename, int width, int height) {
-        super();
+    TexturedShape(String filename, int widthScreen, int heightScreen, int width, int height) {
+        super(3);
         sprite = new Sprite(new Texture(Gdx.files.internal(filename)));
         sprite.setAlpha(0);
-        sprite.setBounds((Gdx.graphics.getWidth()-width)/2, (Gdx.graphics.getHeight()-height)/2, width, height);
-        System.err.println(Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight());
+        sprite.setBounds((widthScreen-width)/2, (heightScreen-height)/2, width, height);
 
         initShapeDesign();
     }
@@ -92,5 +92,22 @@ class TexturedShape extends Shape {
         batch.begin();
         sprite.draw(batch);
         batch.end();
+    }
+
+    float getPercentageOfSuccess(Shape inputShape) {
+        Array<Vector3> userShape = new Array<Vector3>();
+        smooth(inputShape.getShape(), userShape);
+
+        Array<Vector3> foodShape = new Array<Vector3>();
+        smooth(getShape(), foodShape);
+
+        float count = 0;
+        for (Vector3 point : foodShape) {
+            if (isInShape(point, inputShape, userShape)) count++;
+        }
+
+        System.err.println(count);
+
+        return count / foodShape.size;
     }
 }

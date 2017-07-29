@@ -11,7 +11,7 @@ class Shape {
 
     private Array<Vector3> shape;
     private static final float minDistBetweenPoints = 20;
-    private static final int iterations = 2;
+    private final int iterations;
 
     private static final int maxSize = 50;
 
@@ -23,7 +23,12 @@ class Shape {
     private final Color strokeColor = new Color(0.8f, 0.8f, 0.8f, 1);
 
     Shape () {
+        this(2);
+    }
+
+    Shape (int iterations) {
         shape = new Array<Vector3>();
+        this.iterations = iterations;
     }
 
     void setThickness (float thickness) {
@@ -35,8 +40,7 @@ class Shape {
     }
 
     void setInnerColor (float r, float g, float b, float a) {
-        if (r < 0 || r > 1 || g < 0 || g > 1 || b < 0 || b > 1 || a < 0 || a > 1) return;
-        innerColor.set(r, g, b, a);
+        setInnerColor(r, g, b, a, 1);
     }
 
     void setInnerColor (float r, float g, float b, float a, float t) {
@@ -45,8 +49,7 @@ class Shape {
     }
 
     void setStrokeColor (float r, float g, float b, float a) {
-        if (r < 0 || r > 1 || g < 0 || g > 1 || b < 0 || b > 1 || a < 0 || a > 1) return;
-        strokeColor.set(r, g, b, a);
+        setStrokeColor(r, g, b, a, 1);
     }
 
     void setStrokeColor (float r, float g, float b, float a, float t) {
@@ -54,8 +57,21 @@ class Shape {
         strokeColor.lerp(r, g, b, a, t);
     }
 
+    static boolean isInShape(Vector3 point, Shape shape, Array<Vector3> shapeOfShape) { // TODO : make it better, do it faster
+        float distSq = shape.thickness + shape.strokeThickness;
+        distSq *= distSq;
+        for (Vector3 pointShape: shapeOfShape) {
+            if (point.dst2(pointShape) <= distSq) return true;
+        }
+        return false;
+    }
+
     int getSize () {
         return shape.size;
+    }
+
+    Array<Vector3> getShape () {
+        return shape;
     }
 
     void addPoint (Vector3 point) {
@@ -79,7 +95,7 @@ class Shape {
         for (Vector3 point : points) addPoint(point);
     }
 
-    private static void smooth(Array<Vector3> input, Array<Vector3> output) {
+    static void smooth(Array<Vector3> input, Array<Vector3> output) {
         output.clear();
         output.add(input.first());
 

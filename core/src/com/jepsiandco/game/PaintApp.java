@@ -31,7 +31,7 @@ public class PaintApp extends ApplicationAdapter {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
-        food = new TexturedShape("croissant.png", 300, 300);
+        food = new TexturedShape("croissant.png", width, height, 300, 300);
         food.addPoints(ShapesFood.croissantShape);
 
 		shape = new Shape();
@@ -74,13 +74,19 @@ public class PaintApp extends ApplicationAdapter {
             if (drawingShape && shape.getSize() > 0) {
                 drawingShape = false;
 
-                // TODO: Test percentage of success
-                // If (success > 90%) => perfectAnimation and textureAnimation
-                // Else if (success > 75%) => winAnimation and textureAnimation
-                // Else => looseAnimation
+                float success = food.getPercentageOfSuccess(shape);
 
-                food.looseAnimation();
-                food.textureAnimation();
+                if (success > 0.95f) {
+                    // TODO: perfect animation
+                    food.textureAnimation();
+                } else if (success > 0.7f) {
+                    food.winAnimation();
+                    food.textureAnimation();
+                } else {
+                    food.looseAnimation();
+                }
+
+                shape.clear();
             }
         }
 	}
