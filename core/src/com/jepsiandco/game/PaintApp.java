@@ -2,6 +2,7 @@ package com.jepsiandco.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -9,11 +10,14 @@ import com.badlogic.gdx.math.Vector3;
 
 public class PaintApp extends ApplicationAdapter {
 
+    private static final int width = 480;
+    private static final int height = 800;
+
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
 
-    private Texture foodTexture;
+    private TexturedShape food;
 
     private Shape shape;
     private Vector3 currentPoint;
@@ -21,12 +25,19 @@ public class PaintApp extends ApplicationAdapter {
 	
 	@Override
 	public void create () {
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+
 	    camera = new OrthographicCamera();
-	    camera.setToOrtho(false, 480, 800);
+	    camera.setToOrtho(false, width, height);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
-        foodTexture = new Texture(Gdx.files.internal("croissant.png"));
+        food = new TexturedShape("croissant.png", 300, 300);
+
+        food.addPoint(new Vector3(100, 100, 0));
+        food.addPoint(new Vector3(100, 200, 0));
+        food.addPoint(new Vector3(200, 200, 0));
+        food.addPoint(new Vector3(200, 100, 0));
 
 		shape = new Shape();
 		currentPoint = new Vector3();
@@ -38,12 +49,13 @@ public class PaintApp extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		camera.update();
+        batch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
+		food.update();
 
-		batch.begin();
-		batch.draw(foodTexture, 0, 0);
-		batch.end();
+		food.render(batch);
 
+        food.render(shapeRenderer);
         shape.render(shapeRenderer);
 
         Vector3 touchPos = new Vector3();
@@ -63,8 +75,11 @@ public class PaintApp extends ApplicationAdapter {
             }
 
         } else {
-            if (drawingShape && shape.getSize() != 0) {
+            if (drawingShape && shape.getSize() > 0) {
                 drawingShape = false;
+                food.winAnimation();
+                food.textureAnimation();
+
             }
         }
 	}

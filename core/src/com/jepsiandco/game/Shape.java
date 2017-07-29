@@ -1,5 +1,8 @@
 package com.jepsiandco.game;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -10,13 +13,45 @@ class Shape {
     private static final float minDistBetweenPoints = 20;
     private static final int iterations = 2;
 
-    private static final int thickness = 7;
-    private static final int strokeThickness = 4;
-
     private static final int maxSize = 50;
+
+    // Graphic
+    private float thickness = 7;
+    private float strokeThickness = 4;
+
+    private final Color innerColor = new Color(0.9f, 0.9f, 0.9f, 1);
+    private final Color strokeColor = new Color(0.8f, 0.8f, 0.8f, 1);
 
     Shape () {
         shape = new Array<Vector3>();
+    }
+
+    void setThickness (float thickness) {
+        this.thickness = thickness;
+    }
+
+    void setStrokeThickness (float strokeThickness) {
+        this.strokeThickness = strokeThickness;
+    }
+
+    void setInnerColor (float r, float g, float b, float a) {
+        if (r < 0 || r > 1 || g < 0 || g > 1 || b < 0 || b > 1 || a < 0 || a > 1) return;
+        innerColor.set(r, g, b, a);
+    }
+
+    void setInnerColor (float r, float g, float b, float a, float t) {
+        if (r < 0 || r > 1 || g < 0 || g > 1 || b < 0 || b > 1 || a < 0 || a > 1) return;
+        innerColor.lerp(r, g, b, a, t);
+    }
+
+    void setStrokeColor (float r, float g, float b, float a) {
+        if (r < 0 || r > 1 || g < 0 || g > 1 || b < 0 || b > 1 || a < 0 || a > 1) return;
+        strokeColor.set(r, g, b, a);
+    }
+
+    void setStrokeColor (float r, float g, float b, float a, float t) {
+        if (r < 0 || r > 1 || g < 0 || g > 1 || b < 0 || b > 1 || a < 0 || a > 1) return;
+        strokeColor.lerp(r, g, b, a, t);
     }
 
     int getSize () {
@@ -82,9 +117,11 @@ class Shape {
 
 
         // Draw the outputShape
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        shapeRenderer.setColor(0.8f, 0.8f, 0.8f, 1); // Stroke Color
+        shapeRenderer.setColor(strokeColor);
 
         Vector3 current;
         Vector3 previous = outputShape.first();
@@ -97,7 +134,7 @@ class Shape {
         shapeRenderer.circle(previous.x, previous.y, (strokeThickness + thickness) / 2);
 
 
-        shapeRenderer.setColor(0.9f, 0.9f, 0.9f, 1); // Inner Color
+        shapeRenderer.setColor(innerColor);
 
         previous = outputShape.first();
         for (int i = 1; i < outputShape.size-1; i++) {
@@ -109,6 +146,7 @@ class Shape {
         shapeRenderer.circle(previous.x, previous.y, thickness / 2);
 
         shapeRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     void clear () {
