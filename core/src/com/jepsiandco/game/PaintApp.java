@@ -4,16 +4,16 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 
 public class PaintApp extends ApplicationAdapter {
 
     private OrthographicCamera camera;
-    private ImmediateModeRenderer20 renderer;
     private SpriteBatch batch;
+    private ShapeRenderer shapeRenderer;
 
-    private Texture redTexture;
+    private Texture foodTexture;
 
     private Shape shape;
     private Vector3 currentPoint;
@@ -23,10 +23,10 @@ public class PaintApp extends ApplicationAdapter {
 	public void create () {
 	    camera = new OrthographicCamera();
 	    camera.setToOrtho(false, 480, 800);
-        renderer = new ImmediateModeRenderer20(false, true, 1);
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
 
-        redTexture = new Texture(Gdx.files.internal("red.png"));
+        foodTexture = new Texture(Gdx.files.internal("croissant.png"));
 
 		shape = new Shape();
 		currentPoint = new Vector3();
@@ -38,12 +38,13 @@ public class PaintApp extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		camera.update();
+		shapeRenderer.setProjectionMatrix(camera.combined);
 
 		batch.begin();
-		batch.draw(redTexture, 10, 10); // With this line we can see the shape in red ????
+		batch.draw(foodTexture, 0, 0);
 		batch.end();
 
-        shape.render(camera, renderer);
+        shape.render(shapeRenderer);
 
         Vector3 touchPos = new Vector3();
         if (Gdx.input.isTouched()) {
@@ -70,6 +71,7 @@ public class PaintApp extends ApplicationAdapter {
 	
 	@Override
 	public void dispose () {
-	    renderer.dispose();
+	    batch.dispose();
+	    shapeRenderer.dispose();
 	}
 }
