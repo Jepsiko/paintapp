@@ -18,4 +18,18 @@ class ShapesFood {
             new Vector3(194, 454, 0),
             new Vector3(238, 432, 0),
     };
+
+    static final Vector3[] cheeseShape = {
+            new Vector3(126, 279, 0),
+            new Vector3(121, 339, 0),
+            new Vector3(120, 389, 0),
+            new Vector3(203, 462, 0),
+            new Vector3(275, 523, 0),
+            new Vector3(311, 486, 0),
+            new Vector3(351, 444, 0),
+            new Vector3(354, 385, 0),
+            new Vector3(360, 327, 0),
+            new Vector3(240, 304, 0),
+            new Vector3(126, 279, 0),
+    };
 }

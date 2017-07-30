@@ -57,17 +57,16 @@ class Shape {
         strokeColor.lerp(r, g, b, a, t);
     }
 
-    static boolean isInShape(Vector3 point, Shape shape, Array<Vector3> shapeOfShape) { // TODO : make it better, do it faster
-        float distSq = shape.thickness + shape.strokeThickness;
-        distSq *= distSq;
-        for (Vector3 pointShape: shapeOfShape) {
-            if (point.dst2(pointShape) <= distSq) return true;
-        }
-        return false;
-    }
-
     int getSize () {
         return shape.size;
+    }
+
+    float getThickness () {
+        return thickness;
+    }
+
+    float getStrokeThickness () {
+        return strokeThickness;
     }
 
     Array<Vector3> getShape () {
@@ -92,7 +91,9 @@ class Shape {
     }
 
     void addPoints(Vector3[] points) {
-        for (Vector3 point : points) addPoint(point);
+        for (Vector3 point : points) {
+            shape.add(point);
+        }
     }
 
     static void smooth(Array<Vector3> input, Array<Vector3> output) {
@@ -145,7 +146,7 @@ class Shape {
 
         Vector3 current;
         Vector3 previous = outputShape.first();
-        for (int i = 1; i < outputShape.size-1; i++) {
+        for (int i = 1; i < outputShape.size; i++) {
             current = outputShape.get(i);
             shapeRenderer.rectLine(previous.x, previous.y, current.x, current.y, strokeThickness + thickness);
             shapeRenderer.circle(previous.x, previous.y, (strokeThickness + thickness) / 2);
@@ -157,7 +158,7 @@ class Shape {
         shapeRenderer.setColor(innerColor);
 
         previous = outputShape.first();
-        for (int i = 1; i < outputShape.size-1; i++) {
+        for (int i = 1; i < outputShape.size; i++) {
             current = outputShape.get(i);
             shapeRenderer.rectLine(previous.x, previous.y, current.x, current.y, thickness);
             shapeRenderer.circle(previous.x, previous.y, thickness / 2);

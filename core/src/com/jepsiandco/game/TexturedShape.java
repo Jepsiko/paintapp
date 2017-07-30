@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -34,9 +33,18 @@ class TexturedShape extends Shape {
         initShapeDesign();
     }
 
+    TexturedShape(String filename, int widthScreen, int heightScreen, int width, int height, int iterations) {
+        super(iterations);
+        sprite = new Sprite(new Texture(Gdx.files.internal(filename)));
+        sprite.setAlpha(0);
+        sprite.setBounds((widthScreen-width)/2, (heightScreen-height)/2, width, height);
+
+        initShapeDesign();
+    }
+
     private void initShapeDesign() {
-        setInnerColor(0.8f, 1, 0.8f, 1);
-        setStrokeColor(0.5f, 0.7f, 0.5f, 1);
+        setInnerColor(0.8f, 0.8f, 1, 1);
+        setStrokeColor(0.5f, 0.5f, 0.7f, 1);
         setThickness(20);
         setStrokeThickness(10);
     }
@@ -81,10 +89,10 @@ class TexturedShape extends Shape {
 
         long currentTimeTexture = TimeUtils.timeSinceNanos(startTimeTexture);
         if (textureAnimating) {
-            if (currentTimeTexture > animationTimeTexture) textureAnimating = false;
-
             final float alpha = min((float) currentTimeTexture / (float) animationTimeTexture, 1);
             sprite.setAlpha(alpha);
+
+            if (currentTimeTexture > animationTimeTexture) textureAnimating = false;
         }
     }
 
@@ -101,12 +109,25 @@ class TexturedShape extends Shape {
         Array<Vector3> foodShape = new Array<Vector3>();
         smooth(getShape(), foodShape);
 
+        float distSq = inputShape.getThickness();
+        distSq *= distSq;
+
+        boolean tooFar = true;
         float count = 0;
         for (Vector3 point : foodShape) {
-            if (isInShape(point, inputShape, userShape)) count++;
-        }
+            for (Vector3 pointShape: userShape) {
+                if (point.dst2(pointShape) <= distSq)  {
+                    count ++;
+                    continue;
+                }
+                if (point.dst2(pointShape) <= distSq*1.5f) {
+                    tooFar = false;
+                    break;
+                }
+            }
 
-        System.err.println(count);
+            if (tooFar) return 0;
+        }
 
         return count / foodShape.size;
     }

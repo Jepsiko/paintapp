@@ -3,11 +3,12 @@ package com.jepsiandco.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 
-public class PaintApp extends ApplicationAdapter {
+public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 
     private static final int width = 480;
     private static final int height = 800;
@@ -15,6 +16,7 @@ public class PaintApp extends ApplicationAdapter {
     private OrthographicCamera camera;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
+    private BitmapFont font;
 
     private TexturedShape food;
 
@@ -30,9 +32,10 @@ public class PaintApp extends ApplicationAdapter {
 	    camera.setToOrtho(false, width, height);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
+        font = new BitmapFont();
 
-        food = new TexturedShape("croissant.png", width, height, 300, 300);
-        food.addPoints(ShapesFood.croissantShape);
+        food = new TexturedShape("cheese.png", width, height, 300, 300, 0);
+        food.addPoints(ShapesFood.cheeseShape);
 
 		shape = new Shape();
 		currentPoint = new Vector3();
@@ -76,12 +79,15 @@ public class PaintApp extends ApplicationAdapter {
 
                 float success = food.getPercentageOfSuccess(shape);
 
-                if (success > 0.95f) {
-                    // TODO: perfect animation
+                if (success > 0.6f) {
+                    if (success > 0.9f) {
+                        food.winAnimation(); // TODO: perfect animation
+                    } else {
+                        food.winAnimation();
+                    }
+
                     food.textureAnimation();
-                } else if (success > 0.7f) {
-                    food.winAnimation();
-                    food.textureAnimation();
+
                 } else {
                     food.looseAnimation();
                 }
