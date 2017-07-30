@@ -23,6 +23,8 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
     private Shape shape;
     private Vector3 currentPoint;
     private boolean drawingShape = false;
+
+    private float success = 0;
 	
 	@Override
 	public void create () {
@@ -32,6 +34,7 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 	    camera.setToOrtho(false, width, height);
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
+
         font = new BitmapFont();
 
         food = new TexturedShape("cheese.png", width, height, 300, 300, 0);
@@ -43,17 +46,26 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 
 	@Override
 	public void render () {
+	    if (food.isWinned()) {
+            food = new TexturedShape("croissant.png", width, height, 300, 300, 0);
+            food.addPoints(ShapesFood.croissantShape);
+        }
+
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		camera.update();
         batch.setProjectionMatrix(camera.combined);
 		shapeRenderer.setProjectionMatrix(camera.combined);
+
+		batch.begin();
+        font.draw(batch, "Success : " + success, width/2, height-100);
+        batch.end();
+
 		food.update();
-
 		food.render(batch);
-
         food.render(shapeRenderer);
+
         shape.render(shapeRenderer);
 
         Vector3 touchPos = new Vector3();
@@ -62,7 +74,7 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
             camera.unproject(touchPos);
 
             if (!drawingShape) {
-                System.err.println("Position : (" + touchPos.x + ", " + touchPos.y + ")");
+                // System.err.println("Position : (" + touchPos.x + ", " + touchPos.y + ")");
                 drawingShape = true;
                 shape.clear();
             }
@@ -77,11 +89,13 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
             if (drawingShape && shape.getSize() > 0) {
                 drawingShape = false;
 
-                float success = food.getPercentageOfSuccess(shape);
+                success = food.getPercentageOfSuccess(shape);
 
-                if (success > 0.6f) {
+                if (success > 0.5f) {
                     if (success > 0.9f) {
                         food.winAnimation(); // TODO: perfect animation
+                    } else if (success > 0.7f) {
+                        food.winAnimation(); // TODO: great animation
                     } else {
                         food.winAnimation();
                     }

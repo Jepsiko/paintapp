@@ -24,6 +24,8 @@ class TexturedShape extends Shape {
     private boolean looseAnimating = false;
     private boolean textureAnimating = false;
 
+    private boolean winned = false;
+
     TexturedShape(String filename, int widthScreen, int heightScreen, int width, int height) {
         super(3);
         sprite = new Sprite(new Texture(Gdx.files.internal(filename)));
@@ -92,8 +94,15 @@ class TexturedShape extends Shape {
             final float alpha = min((float) currentTimeTexture / (float) animationTimeTexture, 1);
             sprite.setAlpha(alpha);
 
-            if (currentTimeTexture > animationTimeTexture) textureAnimating = false;
+            if (currentTimeTexture > animationTimeTexture) {
+                textureAnimating = false;
+                winned = true;
+            }
         }
+    }
+
+    boolean isWinned () {
+        return winned;
     }
 
     void render (SpriteBatch batch) {
@@ -120,7 +129,7 @@ class TexturedShape extends Shape {
                     count ++;
                     continue;
                 }
-                if (point.dst2(pointShape) <= distSq*1.5f) {
+                if (point.dst2(pointShape) <= distSq*3) {
                     tooFar = false;
                     break;
                 }
