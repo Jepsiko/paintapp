@@ -37,8 +37,8 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 
         font = new BitmapFont();
 
-        food = new TexturedShape("cheese.png", width, height, 300, 300, 0);
-        food.addPoints(ShapesFood.cheeseShape);
+        food = new TexturedShape("croissant.png", width, height, 300, 300);
+        food.addPoints(ShapesFood.croissantShape);
 
 		shape = new Shape();
 		currentPoint = new Vector3();
@@ -47,7 +47,7 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 	@Override
 	public void render () {
 	    if (food.isWinned()) {
-            food = new TexturedShape("croissant.png", width, height, 300, 300, 0);
+            food = new TexturedShape("croissant.png", width, height, 300, 300);
             food.addPoints(ShapesFood.croissantShape);
         }
 
@@ -74,7 +74,7 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
             camera.unproject(touchPos);
 
             if (!drawingShape) {
-                // System.err.println("Position : (" + touchPos.x + ", " + touchPos.y + ")");
+                System.err.println("new Vector3(" + (int)touchPos.x + ", " + (int)touchPos.y + ", 0),");
                 drawingShape = true;
                 shape.clear();
             }
@@ -91,10 +91,10 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 
                 success = food.getPercentageOfSuccess(shape);
 
-                if (success > 0.5f) {
+                if (success > 0.6f) {
                     if (success > 0.9f) {
                         food.winAnimation(); // TODO: perfect animation
-                    } else if (success > 0.7f) {
+                    } else if (success > 0.75f) {
                         food.winAnimation(); // TODO: great animation
                     } else {
                         food.winAnimation();

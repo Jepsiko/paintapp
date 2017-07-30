@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import static java.lang.Math.min;
@@ -13,8 +12,12 @@ import static java.lang.Math.min;
 class TexturedShape extends Shape {
 
     private Sprite sprite;
+    private float widthTexture;
+    private float heightTexture;
+    private float widthScreen;
+    private float heightScreen;
 
-    private static final long animationTimeShape = 80000000L;
+    private static final long animationTimeShape = 100000000L;
     private static final long animationTimeTexture = 500000000L;
 
     private long startTimeShape;
@@ -26,22 +29,24 @@ class TexturedShape extends Shape {
 
     private boolean winned = false;
 
-    TexturedShape(String filename, int widthScreen, int heightScreen, int width, int height) {
-        super(3);
-        sprite = new Sprite(new Texture(Gdx.files.internal(filename)));
-        sprite.setAlpha(0);
-        sprite.setBounds((widthScreen-width)/2, (heightScreen-height)/2, width, height);
+    TexturedShape(String filename, int widthScreen, int heightScreen, int widthTexture, int heightTexture) {
+        super(1);
 
+        this.widthTexture = widthTexture;
+        this.heightTexture = heightTexture;
+        this.widthScreen = widthScreen;
+        this.heightScreen = heightScreen;
+
+        initTextureDesign(filename);
         initShapeDesign();
+
+        // initAnimation();
     }
 
-    TexturedShape(String filename, int widthScreen, int heightScreen, int width, int height, int iterations) {
-        super(iterations);
+    private void initTextureDesign(String filename) {
         sprite = new Sprite(new Texture(Gdx.files.internal(filename)));
         sprite.setAlpha(0);
-        sprite.setBounds((widthScreen-width)/2, (heightScreen-height)/2, width, height);
-
-        initShapeDesign();
+        sprite.setBounds(widthScreen/2, heightScreen/2, 0, 0);
     }
 
     private void initShapeDesign() {
@@ -76,7 +81,9 @@ class TexturedShape extends Shape {
             setThickness(20 + (float) currentTimeShape / (float) animationTimeShape * 40);
             setStrokeThickness(10 - (float) currentTimeShape / (float) animationTimeShape * 10);
 
-            if (currentTimeShape > animationTimeShape) winAnimating = false;
+            if (currentTimeShape > animationTimeShape) {
+                winAnimating = false;
+            }
         } else if (looseAnimating) {
             setInnerColor(1, 0.5f, 0.5f, 0, (float) currentTimeShape / (float) animationTimeShape);
             setStrokeColor(0.7f, 0.3f, 0.3f, 0, (float) currentTimeShape / (float) animationTimeShape);
@@ -91,8 +98,13 @@ class TexturedShape extends Shape {
 
         long currentTimeTexture = TimeUtils.timeSinceNanos(startTimeTexture);
         if (textureAnimating) {
-            final float alpha = min((float) currentTimeTexture / (float) animationTimeTexture, 1);
-            sprite.setAlpha(alpha);
+            float coef = min((float) currentTimeTexture / (float) animationTimeTexture, 1);
+            float width = widthTexture * coef;
+            float height = heightTexture * coef;
+            float x = (widthScreen-width)/2;
+            float y = (heightScreen-height)/2;
+            sprite.setBounds(x, y, width, height);
+            sprite.setAlpha(coef);
 
             if (currentTimeTexture > animationTimeTexture) {
                 textureAnimating = false;
@@ -112,32 +124,27 @@ class TexturedShape extends Shape {
     }
 
     float getPercentageOfSuccess(Shape inputShape) {
-        Array<Vector3> userShape = new Array<Vector3>();
-        smooth(inputShape.getShape(), userShape);
 
-        Array<Vector3> foodShape = new Array<Vector3>();
-        smooth(getShape(), foodShape);
-
-        float distSq = inputShape.getThickness();
+        float distSq = inputShape.getThickness() + inputShape.getStrokeThickness();
         distSq *= distSq;
 
         boolean tooFar = true;
         float count = 0;
-        for (Vector3 point : foodShape) {
-            for (Vector3 pointShape: userShape) {
-                if (point.dst2(pointShape) <= distSq)  {
-                    count ++;
-                    continue;
-                }
-                if (point.dst2(pointShape) <= distSq*3) {
+        for (Vector3 point : getShape()) {
+            for (Vector3 pointShape: inputShape.getShape()) {
+                if (point.dst2(pointShape) <= distSq*1.5) {
                     tooFar = false;
+                    if (point.dst2(pointShape) <= distSq)  {
+                        count ++;
+                    }
                     break;
                 }
+
             }
 
             if (tooFar) return 0;
         }
 
-        return count / foodShape.size;
+        return count / getShape().size;
     }
 }
