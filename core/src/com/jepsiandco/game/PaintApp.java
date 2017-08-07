@@ -24,7 +24,7 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
     private Vector3 currentPoint;
     private boolean drawingShape = false;
 
-    private float success = 0;
+    private int score = 0;
 	
 	@Override
 	public void create () {
@@ -37,8 +37,8 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 
         font = new BitmapFont();
 
-        food = new TexturedShape("croissant.png", width, height, 300, 300);
-        food.addPoints(ShapesFood.croissantShape);
+        food = new TexturedShape("cheese.png", width, height, 300, 300);
+        food.addPoints(ShapesFood.cheeseShape);
 
 		shape = new Shape();
 		currentPoint = new Vector3();
@@ -47,8 +47,8 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 	@Override
 	public void render () {
 	    if (food.isWinned()) {
-            food = new TexturedShape("croissant.png", width, height, 300, 300);
-            food.addPoints(ShapesFood.croissantShape);
+            food = new TexturedShape("cheese.png", width, height, 300, 300);
+            food.addPoints(ShapesFood.cheeseShape);
         }
 
 		Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -59,10 +59,11 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
 		batch.begin();
-        font.draw(batch, "Success : " + success, width/2, height-100);
+        font.draw(batch, "Score : " + score, 20, height-20);
         batch.end();
 
-		food.update();
+		food.update();  // TODO : make a thread for each animation and try to not call update anymore
+                        // Like Playing a music for example
 		food.render(batch);
         food.render(shapeRenderer);
 
@@ -89,15 +90,18 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
             if (drawingShape && shape.getSize() > 0) {
                 drawingShape = false;
 
-                success = food.getPercentageOfSuccess(shape);
+                float success = food.getPercentageOfSuccess(shape);
 
                 if (success > 0.6f) {
                     if (success > 0.9f) {
                         food.winAnimation(); // TODO: perfect animation
+                        score += 200;
                     } else if (success > 0.75f) {
                         food.winAnimation(); // TODO: great animation
+                        score += 100;
                     } else {
                         food.winAnimation();
+                        score += 50;
                     }
 
                     food.textureAnimation();

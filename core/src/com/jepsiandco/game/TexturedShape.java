@@ -44,7 +44,7 @@ class TexturedShape extends Shape {
     }
 
     private void initTextureDesign(String filename) {
-        sprite = new Sprite(new Texture(Gdx.files.internal(filename)));
+        sprite = new Sprite(new Texture(Gdx.files.internal("food/" + filename)));
         sprite.setAlpha(0);
         sprite.setBounds(widthScreen/2, heightScreen/2, 0, 0);
     }

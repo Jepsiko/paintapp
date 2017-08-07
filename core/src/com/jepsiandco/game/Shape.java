@@ -96,7 +96,7 @@ class Shape {
         }
     }
 
-    static void smooth(Array<Vector3> input, Array<Vector3> output) {
+    private static void smooth(Array<Vector3> input, Array<Vector3> output) {
         output.clear();
         output.add(input.first());
 

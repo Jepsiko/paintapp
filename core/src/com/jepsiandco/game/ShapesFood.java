@@ -3,6 +3,13 @@ package com.jepsiandco.game;
 import com.badlogic.gdx.math.Vector3;
 
 class ShapesFood {
+
+    // TODO : instead of having each point saved, we save only the corners and two vectors for each point
+    // Then we draw a curve between two points we a direction of start that is one vector of each point
+    // * See the path tool in GIMP *
+
+    // TODO : store if the shape is closed or not
+
     static final Vector3[] croissantShape = {
             new Vector3(181, 473, 0),
             new Vector3(187, 448, 0),
