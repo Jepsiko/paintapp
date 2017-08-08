@@ -46,7 +46,7 @@ class TexturedShape extends Shape {
 
     private void initTextureDesign(String filename) {
         sprite = new Sprite(new Texture(Gdx.files.internal("food/" + filename + ".png")));
-        sprite.setAlpha(0);
+        sprite.setAlpha(1); // TODO : change to 0
         sprite.setBounds((widthScreen-widthTexture)/2, (heightScreen-heightTexture)/2,
                 widthTexture, heightTexture);
     }
@@ -60,6 +60,10 @@ class TexturedShape extends Shape {
             addPoints(ShapesFood.pizzaShape);
         } else if (filename.equals("cheeseburger")) {
             addPoints(ShapesFood.cheeseburgerShape);
+        } else if (filename.equals("watermelon")) {
+            addPoints(ShapesFood.watermelonShape);
+        } else if (filename.equals("frenchstick")) {
+            addPoints(ShapesFood.frenchstickShape);
         }
     }
 
