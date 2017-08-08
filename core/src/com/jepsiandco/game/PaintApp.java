@@ -6,12 +6,20 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 
 public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 
     private static final int width = 480;
     private static final int height = 800;
+
+    private static final String[] foods = {
+            "cheese",
+            "croissant",
+            "pizza",
+            "cheeseburger",
+    };
 
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -37,8 +45,8 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 
         font = new BitmapFont();
 
-        food = new TexturedShape("cheese.png", width, height, 300, 300);
-        food.addPoints(ShapesFood.cheeseShape);
+        food = new TexturedShape(foods[MathUtils.random(foods.length-1)],
+                width, height, 300, 300);
 
 		shape = new Shape();
 		currentPoint = new Vector3();
@@ -47,8 +55,8 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 	@Override
 	public void render () {
 	    if (food.isWinned()) {
-            food = new TexturedShape("cheese.png", width, height, 300, 300);
-            food.addPoints(ShapesFood.cheeseShape);
+            food = new TexturedShape(foods[MathUtils.random(foods.length-1)],
+                    width, height, 300, 300);
         }
 
 		Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -75,7 +83,6 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
             camera.unproject(touchPos);
 
             if (!drawingShape) {
-                System.err.println("new Vector3(" + (int)touchPos.x + ", " + (int)touchPos.y + ", 0),");
                 drawingShape = true;
                 shape.clear();
             }

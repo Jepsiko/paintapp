@@ -85,6 +85,8 @@ class Shape {
                     System.arraycopy(shape.items, 1, shape.items, 0, shape.size - 1);
                     shape.pop();
                 }
+
+                System.err.println("new Vector3(" + (int)point.x + ", " + (int)point.y + ", 0),");
                 shape.add(point);
             }
         }
