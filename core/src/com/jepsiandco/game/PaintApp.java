@@ -47,8 +47,8 @@ public class PaintApp extends ApplicationAdapter { // TODO : rename to FastDraw
 
         font = new BitmapFont();
 
-        // TODO : foods[MathUtils.random(foods.length-1)]
-        food = new TexturedShape(foods[foods.length-1], width, height, 300, 300);
+        food = new TexturedShape(foods[MathUtils.random(foods.length-1)],
+                width, height, 300, 300);
 
 		shape = new Shape();
 		currentPoint = new Vector3();
