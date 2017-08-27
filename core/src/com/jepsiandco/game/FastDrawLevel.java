@@ -57,7 +57,6 @@ public class FastDrawLevel implements Screen {
     public void render(float delta) {
         if (food.isWinned()) {
             if (foodDone >= topology.length - 1) {
-                System.out.println("Niveau terminé");
                 game.setScreen(new MainMenu(game));
                 dispose();
             } else {

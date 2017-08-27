@@ -14,7 +14,7 @@ public class MainMenu implements Screen {
 
     private final Sprite backgroundSprite;
     private final Sprite playButton;
-    private final Sprite quitButton;
+    private final Sprite optionsButton;
 
     private OrthographicCamera camera;
 
@@ -30,8 +30,8 @@ public class MainMenu implements Screen {
         playButton = new Sprite(new Texture(Gdx.files.internal("buttons/play-button.png")));
         playButton.setBounds((FastDraw.width - 300)/2, 200, 300, 100);
 
-        quitButton = new Sprite(new Texture(Gdx.files.internal("buttons/quit-button.png")));
-        quitButton.setBounds((FastDraw.width -300)/2, 50, 300, 100);
+        optionsButton = new Sprite(new Texture(Gdx.files.internal("buttons/options-button.png")));
+        optionsButton.setBounds((FastDraw.width -300)/2, 50, 300, 100);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MainMenu implements Screen {
         game.batch.begin();
         backgroundSprite.draw(game.batch);
         playButton.draw(game.batch);
-        quitButton.draw(game.batch);
+        optionsButton.draw(game.batch);
         game.batch.end();
 
         Vector3 touchPos = new Vector3();
@@ -63,7 +63,7 @@ public class MainMenu implements Screen {
 
                 game.setScreen(new FastDrawLevel(game, topology, 10));
                 dispose();
-            } else if (quitButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
+            } else if (optionsButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
                 dispose();
             }
         }

@@ -148,7 +148,7 @@ class TexturedShape extends Shape {
         float count = 0;
         for (Vector3 point : getShape()) {
             for (Vector3 pointShape: inputShape.getShape()) {
-                if (point.dst2(pointShape) <= distSq*1.5) {
+                if (point.dst2(pointShape) <= distSq*2) {
                     tooFar = false;
                     if (point.dst2(pointShape) <= distSq)  {
                         count ++;
