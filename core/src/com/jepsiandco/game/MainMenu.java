@@ -32,6 +32,8 @@ public class MainMenu implements Screen {
 
         optionsButton = new Sprite(new Texture(Gdx.files.internal("buttons/options-button.png")));
         optionsButton.setBounds((FastDraw.width -300)/2, 50, 300, 100);
+
+        Gdx.input.setCatchBackKey(false);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.jepsiandco.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -46,6 +47,8 @@ public class FastDrawLevel implements Screen {
 
         shape = new Shape();
         currentPoint = new Vector3();
+
+        Gdx.input.setCatchBackKey(true);
     }
 
     @Override
@@ -99,6 +102,9 @@ public class FastDrawLevel implements Screen {
                 currentPoint.y = touchPos.y;
             }
 
+        } else if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
+            game.setScreen(new MainMenu(game));
+            dispose();
         } else {
             if (drawingShape && shape.getSize() > 0) {
                 drawingShape = false;
