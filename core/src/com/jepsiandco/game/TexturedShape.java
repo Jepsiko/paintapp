@@ -14,8 +14,6 @@ class TexturedShape extends Shape {
     private Sprite sprite;
     private float widthTexture;
     private float heightTexture;
-    private float widthScreen;
-    private float heightScreen;
 
     private static final long animationTimeShape = 100000000L;
     private static final long animationTimeTexture = 500000000L;
@@ -29,13 +27,11 @@ class TexturedShape extends Shape {
 
     private boolean winned = false;
 
-    TexturedShape(String filename, int widthScreen, int heightScreen, int widthTexture, int heightTexture) {
+    TexturedShape(String filename, int widthTexture, int heightTexture) {
         super(1);
 
         this.widthTexture = widthTexture;
         this.heightTexture = heightTexture;
-        this.widthScreen = widthScreen;
-        this.heightScreen = heightScreen;
 
         initTextureDesign(filename);
         initShape(filename);
@@ -47,7 +43,7 @@ class TexturedShape extends Shape {
     private void initTextureDesign(String filename) {
         sprite = new Sprite(new Texture(Gdx.files.internal("food/" + filename + ".png")));
         sprite.setAlpha(0);
-        sprite.setBounds((widthScreen-widthTexture)/2, (heightScreen-heightTexture)/2,
+        sprite.setBounds((FastDraw.width-widthTexture)/2, (FastDraw.height-heightTexture)/2,
                 widthTexture, heightTexture);
     }
 
@@ -121,8 +117,8 @@ class TexturedShape extends Shape {
             float coef = min((float) currentTimeTexture / (float) animationTimeTexture, 1);
             float width = widthTexture * (coef * (1- initialPercentSize) + initialPercentSize);
             float height = heightTexture * (coef * (1- initialPercentSize) + initialPercentSize);
-            float x = (widthScreen-width)/2;
-            float y = (heightScreen-height)/2;
+            float x = (FastDraw.width-width)/2;
+            float y = (FastDraw.height-height)/2;
             sprite.setBounds(x, y, width, height);
             sprite.setAlpha(coef);
 

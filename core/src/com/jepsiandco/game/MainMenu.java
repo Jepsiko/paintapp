@@ -4,10 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector3;
 
 public class MainMenu implements Screen {
 
     final FastDraw game;
+
+    private final Sprite backgroundSprite;
+    private final Sprite playButton;
+    private final Sprite quitButton;
 
     private OrthographicCamera camera;
 
@@ -16,6 +23,15 @@ public class MainMenu implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
+
+        backgroundSprite = new Sprite(new Texture(Gdx.files.internal("background-screens/menu-screen.png")));
+        backgroundSprite.setBounds(0, 0, FastDraw.width, FastDraw.height);
+
+        playButton = new Sprite(new Texture(Gdx.files.internal("buttons/play-button.png")));
+        playButton.setBounds((FastDraw.width - 300)/2, 200, 300, 100);
+
+        quitButton = new Sprite(new Texture(Gdx.files.internal("buttons/quit-button.png")));
+        quitButton.setBounds((FastDraw.width -300)/2, 50, 300, 100);
     }
 
     @Override
@@ -32,16 +48,24 @@ public class MainMenu implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        game.font.draw(game.batch, "Welcome to Fast Draw!!! ", 100, 150);
-        game.font.draw(game.batch, "Tap anywhere to begin!", 100, 100);
+        backgroundSprite.draw(game.batch);
+        playButton.draw(game.batch);
+        quitButton.draw(game.batch);
         game.batch.end();
 
+        Vector3 touchPos = new Vector3();
         if (Gdx.input.isTouched()) {
+            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touchPos);
 
-            final int topology[] = {0, 1, 2, 3, 4, 5, 0};
+            if (playButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
+                final int topology[] = {0, 1, 2, 3, 4, 5, 0};
 
-            game.setScreen(new FastDrawLevel(game, topology, 10));
-            dispose();
+                game.setScreen(new FastDrawLevel(game, topology, 10));
+                dispose();
+            } else if (quitButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
+                dispose();
+            }
         }
     }
 
@@ -67,6 +91,5 @@ public class MainMenu implements Screen {
 
     @Override
     public void dispose() {
-
     }
 }

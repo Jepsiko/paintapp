@@ -42,8 +42,7 @@ public class FastDrawLevel implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
 
-        food = new TexturedShape(foods[topology[foodDone]],
-                FastDraw.width, FastDraw.height, 300, 300);
+        food = new TexturedShape(foods[topology[foodDone]], 300, 300);
 
         shape = new Shape();
         currentPoint = new Vector3();
@@ -63,8 +62,7 @@ public class FastDrawLevel implements Screen {
                 dispose();
             } else {
                 foodDone++;
-                food = new TexturedShape(foods[topology[foodDone]],
-                        FastDraw.width, FastDraw.height, 300, 300);
+                food = new TexturedShape(foods[topology[foodDone]], 300, 300);
             }
         }
 
