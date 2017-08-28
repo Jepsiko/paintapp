@@ -61,9 +61,7 @@ public class MainMenu implements Screen {
             camera.unproject(touchPos);
 
             if (playButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
-                final int topology[] = {0, 1, 2, 3, 4, 5, 0};
-
-                game.setScreen(new FastDrawLevel(game, topology, 10));
+                game.setScreen(new LevelMenu(game));
                 dispose();
             } else if (optionsButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
                 dispose();

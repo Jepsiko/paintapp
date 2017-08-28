@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 public class FastDrawLevel implements Screen {
 
     final FastDraw game;
+    private boolean justEnteredScreen = true;
 
     private OrthographicCamera camera;
 
@@ -31,7 +32,7 @@ public class FastDrawLevel implements Screen {
     private int score = 0;
     private int foodDone = 0;
     private final int topology[];
-    private final int levelTimer; // Timer for the level in seconds
+    private final int levelTimer; // Timer for the level in seconds //TODO : use the timer
 
     FastDrawLevel(final FastDraw game, final int topology[], final int levelTimer) {
         this.game = game;
@@ -60,7 +61,7 @@ public class FastDrawLevel implements Screen {
     public void render(float delta) {
         if (food.isWinned()) {
             if (foodDone >= topology.length - 1) {
-                game.setScreen(new MainMenu(game));
+                game.setScreen(new LevelMenu(game));
                 dispose();
             } else {
                 foodDone++;
@@ -88,6 +89,8 @@ public class FastDrawLevel implements Screen {
 
         Vector3 touchPos = new Vector3();
         if (Gdx.input.isTouched()) {
+            if (justEnteredScreen) return;
+
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
 
@@ -106,6 +109,8 @@ public class FastDrawLevel implements Screen {
             game.setScreen(new MainMenu(game));
             dispose();
         } else {
+            justEnteredScreen = false;
+
             if (drawingShape && shape.getSize() > 0) {
                 drawingShape = false;
 
