@@ -13,8 +13,7 @@ public class MainMenu implements Screen {
     final FastDraw game;
 
     private final Sprite backgroundSprite;
-    private final Sprite playButton;
-    private final Sprite optionsButton;
+    private Sprite buttons[];
 
     private OrthographicCamera camera;
 
@@ -27,11 +26,24 @@ public class MainMenu implements Screen {
         backgroundSprite = new Sprite(new Texture(Gdx.files.internal("background-screens/menu-screen.png")));
         backgroundSprite.setBounds(0, 0, FastDraw.width, FastDraw.height);
 
-        playButton = new Sprite(new Texture(Gdx.files.internal("buttons/play-button.png")));
-        playButton.setBounds((FastDraw.width - 300)/2, 200, 300, 100);
+        final String buttonsNames[] = {
+                "options",
+                "play"
+        };
 
-        optionsButton = new Sprite(new Texture(Gdx.files.internal("buttons/options-button.png")));
-        optionsButton.setBounds((FastDraw.width -300)/2, 50, 300, 100);
+        buttons = new Sprite[buttonsNames.length];
+
+        int y = 100;
+        final int margin = 20;
+        final int buttonsWidth = 200;
+        final int buttonsHeight = buttonsWidth / 3;
+
+        for (int i = 0; i < buttonsNames.length; i++) {
+            buttons[i] = new Sprite(new Texture(Gdx.files.internal("buttons/" + buttonsNames[i] + "-button.png")));
+            buttons[i].setBounds((FastDraw.width - buttonsWidth)/2, y, buttonsWidth, buttonsHeight);
+
+            y += buttonsHeight + margin;
+        }
 
         Gdx.input.setCatchBackKey(false);
     }
@@ -51,20 +63,34 @@ public class MainMenu implements Screen {
 
         game.batch.begin();
         backgroundSprite.draw(game.batch);
-        playButton.draw(game.batch);
-        optionsButton.draw(game.batch);
+
+        for (Sprite button : buttons) {
+            button.draw(game.batch);
+        }
+
         game.batch.end();
 
-        Vector3 touchPos = new Vector3();
         if (Gdx.input.isTouched()) {
+            Vector3 touchPos = new Vector3();
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
 
-            if (playButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
-                game.setScreen(new LevelMenu(game));
-                dispose();
-            } else if (optionsButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
-                dispose();
+            int touchedButton = -1;
+            for (int i = 0; i < buttons.length; i++) {
+                if (buttons[i].getBoundingRectangle().contains(touchPos.x, touchPos.y))
+                    touchedButton = i;
+            }
+
+            switch (touchedButton) {
+                case 0: // Options
+                    //TODO : options menu
+                    dispose();
+                    break;
+
+                case 1: // Play
+                    game.setScreen(new LevelMenu(game));
+                    dispose();
+                    break;
             }
         }
     }

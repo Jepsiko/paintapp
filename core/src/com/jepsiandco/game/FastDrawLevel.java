@@ -87,10 +87,10 @@ public class FastDrawLevel implements Screen {
 
         shape.render(game.shapeRenderer);
 
-        Vector3 touchPos = new Vector3();
         if (Gdx.input.isTouched()) {
             if (justEnteredScreen) return;
 
+            Vector3 touchPos = new Vector3();
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
 
@@ -106,7 +106,9 @@ public class FastDrawLevel implements Screen {
             }
 
         } else if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
-            game.setScreen(new MainMenu(game));
+            if (justEnteredScreen) return;
+
+            game.setScreen(new LevelMenu(game));
             dispose();
         } else {
             justEnteredScreen = false;
