@@ -27,10 +27,10 @@ class LevelMenu implements Screen {
      */
 
     private final int levels[][] = { // The first number is the timer and the rest is the food index
-            {100, 0, 1, 0, 1, 1, 0},
-            {100, 1, 2, 0, 1, 0, 2, 1},
-            {100, 3, 2, 4, 1, 3, 2, 5},
-            {100, 5, 0, 1, 5, 5, 0, 1},
+            {50, 0, 1, 0, 1, 1, 0},
+            {45, 1, 2, 0, 1, 0, 2, 1},
+            {50, 3, 2, 4, 1, 3, 2, 5},
+            {30, 5, 0, 1, 5, 5, 0, 1},
     };
     private TexturedNumber levelNumbers[];
     private int currentLevel;

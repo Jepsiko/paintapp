@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class FastDrawLevel implements Screen {
 
@@ -32,13 +33,15 @@ public class FastDrawLevel implements Screen {
     private int score = 0;
     private int foodDone = 0;
     private int topology[];
-    private final int levelTimer; // Timer for the level in seconds //TODO : use the timer
+    private int levelTimer; // Timer for the level in seconds //TODO : use the timer
+    private long lastSecond;
 
     FastDrawLevel(final FastDraw game, final int topology[]) {
         this.game = game;
         this.topology = new int[topology.length-1];
         System.arraycopy(topology, 1, this.topology, 0, topology.length-1);
         this.levelTimer = topology[0];
+        lastSecond = TimeUtils.nanoTime();
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
@@ -62,13 +65,25 @@ public class FastDrawLevel implements Screen {
     public void render(float delta) {
         if (food.isWinned()) {
             food.dispose();
-            if (foodDone >= topology.length - 1) {
+            if (foodDone >= topology.length - 1) { // Win
                 game.setScreen(new LevelMenu(game));
                 dispose();
             } else {
                 foodDone++;
                 food = new TexturedShape(foods[topology[foodDone]], 300, 300);
             }
+        }
+
+        long now = TimeUtils.nanoTime();
+        if (lastSecond + 1000000000L <= now) { // When a second has passed
+            lastSecond = now;
+            levelTimer--;
+        }
+
+        if (levelTimer == 0) { // Lost
+            food.dispose();
+            game.setScreen(new LevelMenu(game));
+            dispose();
         }
 
         Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -80,6 +95,7 @@ public class FastDrawLevel implements Screen {
 
         game.batch.begin();
         game.font.draw(game.batch, "Score : " + score, 20, FastDraw.height-20);
+        game.font.draw(game.batch, "Timer : " + levelTimer, 20, FastDraw.height-40);
         game.batch.end();
 
         food.update();  // TODO : make a thread for each animation and try to not call update anymore
