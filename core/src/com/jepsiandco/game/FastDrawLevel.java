@@ -33,7 +33,7 @@ public class FastDrawLevel implements Screen {
     private int score = 0;
     private int foodDone = 0;
     private int topology[];
-    private int levelTimer; // Timer for the level in seconds //TODO : use the timer
+    private int levelTimer; // Timer for the level in seconds
     private long lastSecond;
 
     FastDrawLevel(final FastDraw game, final int topology[]) {
