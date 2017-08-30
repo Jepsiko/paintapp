@@ -38,10 +38,6 @@ public class FastDrawLevel implements Screen {
         this.game = game;
         this.topology = new int[topology.length-1];
         System.arraycopy(topology, 1, this.topology, 0, topology.length-1);
-        for (int i = 0; i < this.topology.length; i++) {
-            System.out.println(i + " " + this.topology[i]);
-        }
-
         this.levelTimer = topology[0];
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
