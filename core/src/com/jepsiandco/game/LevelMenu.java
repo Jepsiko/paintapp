@@ -95,6 +95,8 @@ class LevelMenu implements Screen {
 
             if (playButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
                 game.setScreen(new FastDrawLevel(game, levels[currentLevel], 100));
+                dispose();
+
             } else if (lastPos.z != -1) {
                 xScroll += lastPos.x - touchPos.x;
                 if (xScroll < 0) xScroll = 0;
@@ -102,8 +104,6 @@ class LevelMenu implements Screen {
             }
 
             lastPos = touchPos;
-
-            dispose();
         } else if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
             if (justEnteredScreen) return;
 
@@ -150,7 +150,9 @@ class LevelMenu implements Screen {
 
     @Override
     public void dispose() {
-
+        for (TexturedNumber levelNumber: levelNumbers) {
+            levelNumber.dispose();
+        }
     }
 
     private int roundFloatToInt(float number) {

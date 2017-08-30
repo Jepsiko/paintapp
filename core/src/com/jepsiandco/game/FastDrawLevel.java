@@ -60,6 +60,7 @@ public class FastDrawLevel implements Screen {
     @Override
     public void render(float delta) {
         if (food.isWinned()) {
+            food.dispose();
             if (foodDone >= topology.length - 1) {
                 game.setScreen(new LevelMenu(game));
                 dispose();

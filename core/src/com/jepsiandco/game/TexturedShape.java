@@ -11,6 +11,7 @@ import static java.lang.Math.min;
 
 class TexturedShape extends Shape {
 
+    private Texture texture;
     private Sprite sprite;
     private float widthTexture;
     private float heightTexture;
@@ -41,7 +42,8 @@ class TexturedShape extends Shape {
     }
 
     private void initTextureDesign(String filename) {
-        sprite = new Sprite(new Texture(Gdx.files.internal("food/" + filename + ".png")));
+        texture = new Texture(Gdx.files.internal("food/" + filename + ".png"));
+        sprite = new Sprite(texture);
         sprite.setAlpha(0);
         sprite.setBounds((FastDraw.width-widthTexture)/2, (FastDraw.height-heightTexture)/2,
                 widthTexture, heightTexture);
@@ -162,5 +164,9 @@ class TexturedShape extends Shape {
         }
 
         return count / getShape().size;
+    }
+
+    void dispose() {
+        texture.dispose();
     }
 }
