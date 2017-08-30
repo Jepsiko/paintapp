@@ -59,12 +59,13 @@ class LevelMenu implements Screen {
 
         game.batch.begin();
         final int charSize = 200;
+        final int widthCenter = FastDraw.width / 2;
 
         for (int i = 0; i < levelNumbers.length; i++) {
-            float x = (i+1) * FastDraw.width / 2 - xScroll;
-            float diff = abs(FastDraw.width/2 - x);
+            float x = (i+1) * widthCenter - xScroll;
+            float diff = abs(widthCenter - x);
             if (diff < FastDraw.width) {
-                float size = charSize - 0.5f * diff;
+                float size = (widthCenter - diff * 0.4f) / (widthCenter) * charSize;
                 x -= size / 2;
                 float y = (FastDraw.height - size) / 2;
                 levelNumbers[i].draw(game.batch, x, y, size);
@@ -84,7 +85,7 @@ class LevelMenu implements Screen {
                 game.setScreen(new FastDrawLevel(game, levels[currentLevel], 100));
             }
 
-            else if (touchPos.x < FastDraw.width/2) {
+            else if (touchPos.x < widthCenter) {
                 xScroll -= 3;
                 if (xScroll <= 0)
                     xScroll = 0;
@@ -92,8 +93,8 @@ class LevelMenu implements Screen {
 
             else {
                 xScroll += 3;
-                if (xScroll >= FastDraw.width / 2 * (levelNumbers.length-1))
-                    xScroll = FastDraw.width / 2 * (levelNumbers.length-1);
+                if (xScroll >= widthCenter * (levelNumbers.length-1))
+                    xScroll = widthCenter * (levelNumbers.length-1);
             }
 
             dispose();
@@ -105,9 +106,9 @@ class LevelMenu implements Screen {
         } else {
             justEnteredScreen = false;
 
-            currentLevel = roundFloatToInt(xScroll / (FastDraw.width/2));
+            currentLevel = roundFloatToInt(xScroll / (widthCenter));
 
-            int expectedXScroll = currentLevel * FastDraw.width/2;
+            int expectedXScroll = currentLevel * widthCenter;
             if (expectedXScroll < xScroll) {
                 xScroll -= 3;
                 if (expectedXScroll > xScroll)
