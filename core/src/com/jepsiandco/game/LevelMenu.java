@@ -17,19 +17,20 @@ class LevelMenu implements Screen {
     private OrthographicCamera camera;
     private final Sprite playButton;
 
-    private final int levels[][] = {
-            {0, 1, 0, 1},
-            {1, 2, 0, 1, 0, 2, 1},
-            {3, 2, 4, 1, 3, 2, 5},
-            {0, 1, 0, 1},
-            {1, 2, 0, 1, 0, 2, 1},
-            {3, 2, 4, 1, 3, 2, 5},
-            {0, 1, 0, 1},
-            {1, 2, 0, 1, 0, 2, 1},
-            {3, 2, 4, 1, 3, 2, 5},
-            {0, 1, 0, 1},
-            {1, 2, 0, 1, 0, 2, 1},
-            {3, 2, 4, 1, 3, 2, 5},
+    /*
+    0 : Cheese
+    1 : Croissant
+    2 : Pizza
+    3 : Cheeseburger
+    4 : Watermelon
+    5 : Frenchstick
+     */
+
+    private final int levels[][] = { // The first number is the timer and the rest is the food index
+            {100, 0, 1, 0, 1, 1, 0},
+            {100, 1, 2, 0, 1, 0, 2, 1},
+            {100, 3, 2, 4, 1, 3, 2, 5},
+            {100, 5, 0, 1, 5, 5, 0, 1},
     };
     private TexturedNumber levelNumbers[];
     private int currentLevel;
@@ -43,7 +44,7 @@ class LevelMenu implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
         playButton = new Sprite(new Texture(Gdx.files.internal("buttons/play-button.png")));
-        playButton.setBounds((480-300)/2, 50, 300, 100);
+        playButton.setBounds((FastDraw.width-300)/2, 50, 300, 100);
 
         levelNumbers = new TexturedNumber[levels.length];
         for (int i = 0; i < levelNumbers.length; i++) {
@@ -94,7 +95,7 @@ class LevelMenu implements Screen {
             camera.unproject(touchPos);
 
             if (playButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
-                game.setScreen(new FastDrawLevel(game, levels[currentLevel], 100));
+                game.setScreen(new FastDrawLevel(game, levels[currentLevel]));
                 dispose();
 
             } else if (lastPos.z != -1) {

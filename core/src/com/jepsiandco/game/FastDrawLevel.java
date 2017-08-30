@@ -31,20 +31,25 @@ public class FastDrawLevel implements Screen {
 
     private int score = 0;
     private int foodDone = 0;
-    private final int topology[];
+    private int topology[];
     private final int levelTimer; // Timer for the level in seconds //TODO : use the timer
 
-    FastDrawLevel(final FastDraw game, final int topology[], final int levelTimer) {
+    FastDrawLevel(final FastDraw game, final int topology[]) {
         this.game = game;
-        this.topology = topology;
-        this.levelTimer = levelTimer;
+        this.topology = new int[topology.length-1];
+        System.arraycopy(topology, 1, this.topology, 0, topology.length-1);
+        for (int i = 0; i < this.topology.length; i++) {
+            System.out.println(i + " " + this.topology[i]);
+        }
+
+        this.levelTimer = topology[0];
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
 
-        food = new TexturedShape(foods[topology[foodDone]], 300, 300);
+        food = new TexturedShape(foods[this.topology[foodDone]], 300, 300);
 
         shape = new Shape();
         currentPoint = new Vector3();
