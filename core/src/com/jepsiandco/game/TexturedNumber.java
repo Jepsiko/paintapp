@@ -7,26 +7,23 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 class TexturedNumber {
 
-    private final int number;
+    private int number;
     private Texture textures[];
 
     TexturedNumber(int number) {
-        this.number = number;
-        String numberString = String.valueOf(number);
-        textures = new Texture[numberString.length()];
-
-        for (int i = 0; i < numberString.length(); i++) {
-            char numberChar = numberString.charAt(i);
-            textures[i] = new Texture(Gdx.files.internal("numbers/" + numberChar + ".png"));
-        }
+        setNumber(number);
     }
 
-    void draw(SpriteBatch batch, float x, float y, float charSize) { // Draw the number centered in x and y
+    void draw(SpriteBatch batch, float x, float y, float charSize) {
+        draw(batch, x, y, charSize, charSize/2);
+    }
+
+    void draw(SpriteBatch batch, float x, float y, float charSize, float margin) { // Draw the number centered in x and y
+        if (charSize > textures[0].getWidth()) System.err.println("Warning : Resolution of the texture too small");
         String numberString = String.valueOf(number);
         x -= charSize/4 * (numberString.length()+1);
         y -= charSize/2;
 
-        float margin = charSize/2;
         for (int i = 0; i < numberString.length(); i++) {
             Sprite numberSprite = new Sprite(textures[i]);
             numberSprite.setBounds(x, y, charSize, charSize);
@@ -37,8 +34,22 @@ class TexturedNumber {
     }
 
     void dispose() {
+        if (textures == null) return;
         for (Texture texture : textures) {
             texture.dispose();
+        }
+    }
+
+    void setNumber(int number) {
+        dispose();
+
+        this.number = number;
+        String numberString = String.valueOf(number);
+        textures = new Texture[numberString.length()];
+
+        for (int i = 0; i < numberString.length(); i++) {
+            char numberChar = numberString.charAt(i);
+            textures[i] = new Texture(Gdx.files.internal("numbers/" + numberChar + ".png"));
         }
     }
 }
