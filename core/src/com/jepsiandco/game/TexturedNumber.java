@@ -10,6 +10,10 @@ class TexturedNumber {
     private int number;
     private Texture textures[];
 
+    TexturedNumber() {
+        setNumber(0);
+    }
+
     TexturedNumber(int number) {
         setNumber(number);
     }

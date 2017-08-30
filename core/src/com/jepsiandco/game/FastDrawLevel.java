@@ -42,7 +42,7 @@ public class FastDrawLevel implements Screen {
         this.topology = new int[topology.length-1];
         System.arraycopy(topology, 1, this.topology, 0, topology.length-1);
         this.levelTimer = topology[0];
-        texturedScore = new TexturedNumber(score);
+        texturedScore = new TexturedNumber();
         lastSecond = TimeUtils.nanoTime();
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
