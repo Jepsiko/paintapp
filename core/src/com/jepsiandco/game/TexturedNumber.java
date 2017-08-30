@@ -22,6 +22,8 @@ class TexturedNumber {
     }
 
     void draw(SpriteBatch batch, float x, float y, float charSize) { // Draw the number centered in x and y
+        if (charSize > textures[0].getWidth()) System.err.println("Warning : Resolution of the texture too small");
+
         String numberString = String.valueOf(number);
         x -= charSize/4 * (numberString.length()+1);
         y -= charSize/2;
