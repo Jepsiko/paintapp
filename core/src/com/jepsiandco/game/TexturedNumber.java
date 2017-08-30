@@ -13,10 +13,12 @@ class TexturedNumber {
         this.number = number;
     }
 
-    void draw(SpriteBatch batch, float x, float y, float charSize) {
+    void draw(SpriteBatch batch, float x, float y, float charSize) { // Draw the number centered in x and y
         String numberString = String.valueOf(number);
+        x -= charSize/4 * (numberString.length()+1);
+        y -= charSize/2;
 
-        float margin = charSize/4*3;
+        float margin = charSize/2;
         for (int i = 0; i < numberString.length(); i++) {
             char numberChar = numberString.charAt(i);
 
@@ -26,9 +28,5 @@ class TexturedNumber {
 
             x += margin;
         }
-    }
-
-    public int getNumber() {
-        return number;
     }
 }

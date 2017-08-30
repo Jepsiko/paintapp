@@ -21,10 +21,21 @@ class LevelMenu implements Screen {
             {0, 1, 0, 1},
             {1, 2, 0, 1, 0, 2, 1},
             {3, 2, 4, 1, 3, 2, 5},
+            {0, 1, 0, 1},
+            {1, 2, 0, 1, 0, 2, 1},
+            {3, 2, 4, 1, 3, 2, 5},
+            {0, 1, 0, 1},
+            {1, 2, 0, 1, 0, 2, 1},
+            {3, 2, 4, 1, 3, 2, 5},
+            {0, 1, 0, 1},
+            {1, 2, 0, 1, 0, 2, 1},
+            {3, 2, 4, 1, 3, 2, 5},
     };
     private TexturedNumber levelNumbers[];
     private int currentLevel;
+
     private float xScroll;
+    private Vector3 lastPos;
 
     LevelMenu(final FastDraw game) {
         this.game = game;
@@ -39,7 +50,9 @@ class LevelMenu implements Screen {
             levelNumbers[i] = new TexturedNumber(i+1);
         }
         currentLevel = 1;
+
         xScroll = 0;
+        lastPos = new Vector3(0, 0, -1); // z is the flag value
 
         Gdx.input.setCatchBackKey(true);
     }
@@ -66,8 +79,7 @@ class LevelMenu implements Screen {
             float diff = abs(widthCenter - x);
             if (diff < FastDraw.width) {
                 float size = (widthCenter - diff * 0.4f) / (widthCenter) * charSize;
-                x -= size / 2;
-                float y = (FastDraw.height - size) / 2;
+                float y = FastDraw.height / 2;
                 levelNumbers[i].draw(game.batch, x, y, size);
             }
         }
@@ -83,19 +95,13 @@ class LevelMenu implements Screen {
 
             if (playButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
                 game.setScreen(new FastDrawLevel(game, levels[currentLevel], 100));
+            } else if (lastPos.z != -1) {
+                xScroll += lastPos.x - touchPos.x;
+                if (xScroll < 0) xScroll = 0;
+                else if (xScroll > widthCenter * (levels.length-1)) xScroll = widthCenter * (levels.length-1);
             }
 
-            else if (touchPos.x < widthCenter) {
-                xScroll -= 3;
-                if (xScroll <= 0)
-                    xScroll = 0;
-            }
-
-            else {
-                xScroll += 3;
-                if (xScroll >= widthCenter * (levelNumbers.length-1))
-                    xScroll = widthCenter * (levelNumbers.length-1);
-            }
+            lastPos = touchPos;
 
             dispose();
         } else if (Gdx.input.isKeyPressed(Input.Keys.BACK)) {
@@ -105,16 +111,17 @@ class LevelMenu implements Screen {
             dispose();
         } else {
             justEnteredScreen = false;
+            lastPos.z = -1;
 
             currentLevel = roundFloatToInt(xScroll / (widthCenter));
 
             int expectedXScroll = currentLevel * widthCenter;
             if (expectedXScroll < xScroll) {
-                xScroll -= 3;
+                xScroll -= 4;
                 if (expectedXScroll > xScroll)
                     xScroll = expectedXScroll;
             } else if (expectedXScroll > xScroll) {
-                xScroll += 3;
+                xScroll += 4;
                 if (expectedXScroll < xScroll)
                     xScroll = expectedXScroll;
             }
