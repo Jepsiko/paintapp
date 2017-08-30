@@ -12,13 +12,11 @@ public class FastDraw extends Game {
 
     SpriteBatch batch;
     ShapeRenderer shapeRenderer;
-    BitmapFont font;
 	
 	@Override
 	public void create () {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-        font = new BitmapFont();
 
         this.setScreen(new MainMenu(this));
 	}

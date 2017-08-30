@@ -30,6 +30,7 @@ public class FastDrawLevel implements Screen {
     private boolean drawingShape = false;
 
     private int score = 0;
+    private TexturedNumber texturedScore;
     private int foodDone = 0;
     private int topology[];
     private final int levelTimer; // Timer for the level in seconds //TODO : use the timer
@@ -39,6 +40,7 @@ public class FastDrawLevel implements Screen {
         this.topology = new int[topology.length-1];
         System.arraycopy(topology, 1, this.topology, 0, topology.length-1);
         this.levelTimer = topology[0];
+        texturedScore = new TexturedNumber(score);
 
         Gdx.gl.glEnable(GL20.GL_BLEND);
 
@@ -79,7 +81,7 @@ public class FastDrawLevel implements Screen {
         game.shapeRenderer.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        game.font.draw(game.batch, "Score : " + score, 20, FastDraw.height-20);
+        texturedScore.draw(game.batch, FastDraw.width/2, FastDraw.height-100, 100, 60);
         game.batch.end();
 
         food.update();  // TODO : make a thread for each animation and try to not call update anymore
@@ -132,6 +134,7 @@ public class FastDrawLevel implements Screen {
                         score += 50;
                     }
 
+                    texturedScore.setNumber(score);
                     food.textureAnimation();
 
                 } else {
