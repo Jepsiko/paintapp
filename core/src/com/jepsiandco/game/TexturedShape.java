@@ -155,12 +155,15 @@ class TexturedShape extends Shape {
         texture.dispose();
     }
 
-    private static boolean isPointInShape(Vector3 point, Shape shape) {
+    private boolean isPointInShape(Vector3 point, Shape shape) {
         Vector3 current;
         Vector3 previous = shape.getShape().first();
         for (int i = 1; i < shape.getShape().size; i++) {
             current = shape.getShape().get(i);
-            if (isPointInRectLine(point, previous.x, previous.y, current.x, current.y, 4 + 7)) return true;
+
+            if (isPointInRectLine(point, previous.x, previous.y, current.x, current.y,
+                    (getThickness() + getStrokeThickness()))) return true;
+
             previous = current;
         }
 
