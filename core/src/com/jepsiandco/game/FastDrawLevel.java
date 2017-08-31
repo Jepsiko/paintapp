@@ -2,6 +2,7 @@ package com.jepsiandco.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -34,19 +35,22 @@ public class FastDrawLevel implements Screen {
     private TexturedNumber texturedScore;
     private int foodDone = 0;
 
+    private final int levelNumber;
     private int starsScore[];
     private int levelTimer; // Timer for the level in seconds
     private int level[];
 
     private long lastSecond;
 
-    FastDrawLevel(final FastDraw game, final int level[]) {
+    FastDrawLevel(final FastDraw game, final int level[], final int levelNumber) {
         this.game = game;
         this.starsScore = new int[3];
         System.arraycopy(level, 0, starsScore, 0, 3);
         this.levelTimer = level[3];
-        this.level = new int[level.length-4];
-        System.arraycopy(level, 4, this.level, 0, level.length-4);
+        this.level = new int[level.length - 4];
+        System.arraycopy(level, 4, this.level, 0, level.length - 4);
+        this.levelNumber = levelNumber;
+
         texturedScore = new TexturedNumber();
         lastSecond = TimeUtils.nanoTime();
 
@@ -108,8 +112,8 @@ public class FastDrawLevel implements Screen {
         game.shapeRenderer.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        texturedScore.draw(game.batch, FastDraw.width/2, FastDraw.height-100, 100, 60);
-        game.font.draw(game.batch, "Timer : " + levelTimer, 20, FastDraw.height-40);
+        texturedScore.draw(game.batch, FastDraw.width / 2, FastDraw.height - 100, 100, 60);
+        game.font.draw(game.batch, "Timer : " + levelTimer, 20, FastDraw.height - 40);
         game.batch.end();
 
         food.update();  // TODO : make a thread for each animation and try to not call update anymore
@@ -204,13 +208,20 @@ public class FastDrawLevel implements Screen {
     }
 
     private void won() {
-        System.err.print("You won");
-
+        int starsEarned = 1;
         if (score >= starsScore[2])
-            System.err.println(" 3 stars !");
-        else if (score >= starsScore[1])
-            System.err.println(" 2 stars !");
-        else
-            System.err.println(" 1 star !");
+            starsEarned++;
+        if (score >= starsScore[1])
+            starsEarned++;
+
+
+        // key : value
+        // levelNumber : starEarned score
+        // 1 : 2 750
+        Preferences prefs = Gdx.app.getPreferences("Fast Draw");
+        String starsAndScore = prefs.getString(String.valueOf(levelNumber), "0 0");
+        int bestScore = Integer.parseInt(starsAndScore.substring(2));
+        if (bestScore < score) prefs.putString(String.valueOf(levelNumber), starsEarned + " " + score);
+        prefs.flush();
     }
 }

@@ -2,6 +2,7 @@ package com.jepsiandco.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -16,6 +17,10 @@ class LevelMenu implements Screen {
 
     private OrthographicCamera camera;
     private final Sprite playButton;
+    private final Texture yellowStar;
+    private final Texture orangeStar;
+    private final Texture redStar;
+    private final Texture greyStar;
 
     /*
     0 : Cheese
@@ -46,6 +51,10 @@ class LevelMenu implements Screen {
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
         playButton = new Sprite(new Texture(Gdx.files.internal("buttons/play-button.png")));
         playButton.setBounds((FastDraw.width-300)/2, 50, 300, 100);
+        yellowStar = new Texture(Gdx.files.internal("stars/yellow-star.png"));
+        orangeStar = new Texture(Gdx.files.internal("stars/orange-star.png"));
+        redStar = new Texture(Gdx.files.internal("stars/red-star.png"));
+        greyStar = new Texture(Gdx.files.internal("stars/grey-star.png"));
 
         levelNumbers = new TexturedNumber[levels.length];
         for (int i = 0; i < levelNumbers.length; i++) {
@@ -73,6 +82,7 @@ class LevelMenu implements Screen {
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
+        Preferences prefs = Gdx.app.getPreferences("Fast Draw");
         final int charSize = 200;
         final int widthCenter = FastDraw.width / 2;
 
@@ -82,7 +92,54 @@ class LevelMenu implements Screen {
             if (diff < FastDraw.width) {
                 float size = (widthCenter - diff * 0.4f) / (widthCenter) * charSize;
                 float y = FastDraw.height / 2;
+
                 levelNumbers[i].draw(game.batch, x, y, size);
+
+                String starsAndScore = prefs.getString(String.valueOf(i), "0 0");
+
+                int bestScore = Integer.parseInt(starsAndScore.substring(2));
+                if (bestScore > 0) game.font.draw(game.batch, "Best Score : " + bestScore, x, y - size*0.6f);
+
+
+                // Draw the stars
+                int stars = Character.getNumericValue(starsAndScore.charAt(0));
+
+                int middleStarSize = 110;
+                float middleStarYOffset = 0.6f;
+
+                int sideStarsSize = 90;
+                int sideStarsAngle = 20;
+                float sideStarsYOffset = 0.5f;
+                float sideStarsXOffset = 0.8f;
+
+                Sprite star;
+                if (stars > 2)
+                    star = new Sprite(redStar);
+                else
+                    star = new Sprite(greyStar);
+                star.setBounds(x-sideStarsSize/2 + sideStarsSize*sideStarsXOffset,
+                        y + size*sideStarsYOffset, sideStarsSize, sideStarsSize);
+                star.setOrigin(sideStarsSize/2, sideStarsSize/2);
+                star.rotate(-sideStarsAngle);
+                star.draw(game.batch);
+
+                if (stars > 1)
+                    star = new Sprite(orangeStar);
+                else
+                    star = new Sprite(greyStar);
+                star.setBounds(x-middleStarSize/2,
+                        y + size*middleStarYOffset, middleStarSize, middleStarSize);
+                star.draw(game.batch);
+
+                if (stars > 0)
+                    star = new Sprite(yellowStar);
+                else
+                    star = new Sprite(greyStar);
+                star.setBounds(x-sideStarsSize/2 - sideStarsSize*sideStarsXOffset,
+                        y + size*sideStarsYOffset, sideStarsSize, sideStarsSize);
+                star.setOrigin(sideStarsSize/2, sideStarsSize/2);
+                star.rotate(sideStarsAngle);
+                star.draw(game.batch);
             }
         }
         playButton.draw(game.batch);
@@ -96,7 +153,7 @@ class LevelMenu implements Screen {
             camera.unproject(touchPos);
 
             if (playButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
-                game.setScreen(new FastDrawLevel(game, levels[currentLevel]));
+                game.setScreen(new FastDrawLevel(game, levels[currentLevel], currentLevel));
                 dispose();
 
             } else if (lastPos.z != -1) {
@@ -155,6 +212,9 @@ class LevelMenu implements Screen {
         for (TexturedNumber levelNumber: levelNumbers) {
             levelNumber.dispose();
         }
+        yellowStar.dispose();
+        orangeStar.dispose();
+        redStar.dispose();
     }
 
     private int roundFloatToInt(float number) {
