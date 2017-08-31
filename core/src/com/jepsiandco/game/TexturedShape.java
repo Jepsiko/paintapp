@@ -26,7 +26,7 @@ class TexturedShape extends Shape {
     private boolean looseAnimating = false;
     private boolean textureAnimating = false;
 
-    private boolean winned = false;
+    private boolean won = false;
 
     TexturedShape(String filename, int widthTexture, int heightTexture) {
         super(1);
@@ -126,13 +126,13 @@ class TexturedShape extends Shape {
 
             if (currentTimeTexture > animationTimeTexture) {
                 textureAnimating = false;
-                winned = true;
+                won = true;
             }
         }
     }
 
-    boolean isWinned() {
-        return winned;
+    boolean isWon() {
+        return won;
     }
 
     void render(SpriteBatch batch) {
@@ -144,9 +144,13 @@ class TexturedShape extends Shape {
     float getPercentageOfSuccess(Shape inputShape) {
 
         float count = 0;
-        for (Vector3 point : getShape()) {
-            if (isPointInShape(point, inputShape)) count++;
-        }
+        float thickness = getThickness() + getStrokeThickness();
+
+        for (Vector3 point : inputShape.getShape()) // If we draw too far from the shape, it doesn't count
+            if (!isPointInShape(point, this, thickness*1.5f)) return 0;
+
+        for (Vector3 point : getShape())
+            if (isPointInShape(point, inputShape, thickness)) count++;
 
         return count / getShape().size;
     }
@@ -155,14 +159,13 @@ class TexturedShape extends Shape {
         texture.dispose();
     }
 
-    private boolean isPointInShape(Vector3 point, Shape shape) {
+    private boolean isPointInShape(Vector3 point, Shape shape, float thickness) {
         Vector3 current;
         Vector3 previous = shape.getShape().first();
         for (int i = 1; i < shape.getShape().size; i++) {
             current = shape.getShape().get(i);
 
-            if (isPointInRectLine(point, previous.x, previous.y, current.x, current.y,
-                    (getThickness() + getStrokeThickness()))) return true;
+            if (isPointInRectLine(point, previous.x, previous.y, current.x, current.y, thickness)) return true;
 
             previous = current;
         }

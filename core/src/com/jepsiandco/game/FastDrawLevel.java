@@ -70,11 +70,15 @@ public class FastDrawLevel implements Screen {
 
     @Override
     public void render(float delta) {
-        if (food.isWinned()) {
+        if (food.isWon()) {
             food.dispose();
-            if (foodDone >= level.length - 1) { // Win
+            if (foodDone >= level.length - 1) {
 
                 // TODO : show stars earned from score
+                if (score < starsScore[0])  // Lost
+                    lost();
+                else                        // Won
+                    won();
 
                 game.setScreen(new LevelMenu(game));
                 dispose();
@@ -146,11 +150,11 @@ public class FastDrawLevel implements Screen {
 
                 float success = food.getPercentageOfSuccess(shape);
 
-                if (success > 0.8f) {
-                    if (success > 0.95f) {
+                if (success > 0.85f) {
+                    if (success > 0.98f) {
                         food.winAnimation(); // TODO: perfect animation
                         score += 200;
-                    } else if (success > 0.9f) {
+                    } else if (success > 0.93f) {
                         food.winAnimation(); // TODO: great animation
                         score += 100;
                     } else {
@@ -193,5 +197,20 @@ public class FastDrawLevel implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    private void lost() {
+        System.err.println("You lost..");
+    }
+
+    private void won() {
+        System.err.print("You won");
+
+        if (score >= starsScore[2])
+            System.err.println(" 3 stars !");
+        else if (score >= starsScore[1])
+            System.err.println(" 2 stars !");
+        else
+            System.err.println(" 1 star !");
     }
 }
