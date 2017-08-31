@@ -33,15 +33,20 @@ public class FastDrawLevel implements Screen {
     private int score = 0;
     private TexturedNumber texturedScore;
     private int foodDone = 0;
-    private int topology[];
+
+    private int starsScore[];
     private int levelTimer; // Timer for the level in seconds
+    private int level[];
+
     private long lastSecond;
 
-    FastDrawLevel(final FastDraw game, final int topology[]) {
+    FastDrawLevel(final FastDraw game, final int level[]) {
         this.game = game;
-        this.topology = new int[topology.length-1];
-        System.arraycopy(topology, 1, this.topology, 0, topology.length-1);
-        this.levelTimer = topology[0];
+        this.starsScore = new int[3];
+        System.arraycopy(level, 0, starsScore, 0, 3);
+        this.levelTimer = level[3];
+        this.level = new int[level.length-4];
+        System.arraycopy(level, 4, this.level, 0, level.length-4);
         texturedScore = new TexturedNumber();
         lastSecond = TimeUtils.nanoTime();
 
@@ -50,7 +55,7 @@ public class FastDrawLevel implements Screen {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
 
-        food = new TexturedShape(foods[this.topology[foodDone]], 300, 300);
+        food = new TexturedShape(foods[this.level[foodDone]], 300, 300);
 
         shape = new Shape();
         currentPoint = new Vector3();
@@ -67,12 +72,15 @@ public class FastDrawLevel implements Screen {
     public void render(float delta) {
         if (food.isWinned()) {
             food.dispose();
-            if (foodDone >= topology.length - 1) { // Win
+            if (foodDone >= level.length - 1) { // Win
+
+                // TODO : show stars earned from score
+
                 game.setScreen(new LevelMenu(game));
                 dispose();
             } else {
                 foodDone++;
-                food = new TexturedShape(foods[topology[foodDone]], 300, 300);
+                food = new TexturedShape(foods[level[foodDone]], 300, 300);
             }
         }
 

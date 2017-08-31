@@ -26,11 +26,12 @@ class LevelMenu implements Screen {
     5 : Frenchstick
      */
 
-    private final int levels[][] = { // The first number is the timer and the rest is the food index
-            {50, 0, 1, 0, 1, 1, 0},
-            {45, 1, 2, 0, 1, 0, 2, 1},
-            {50, 3, 2, 4, 1, 3, 2, 5},
-            {30, 5, 0, 1, 5, 5, 0, 1},
+    // [1StarScore, 2StarsScore, 3StarsScore, levelTimer, [food]]
+    private final int levels[][] = {
+            {300, 500, 800, 50, 0, 1, 0, 1, 1, 0},
+            {300, 500, 700, 45, 1, 2, 0, 1, 0, 2, 1},
+            {300, 500, 700, 50, 3, 2, 4, 1, 3, 2, 5},
+            {300, 500, 700, 30, 5, 0, 1, 5, 5, 0, 1},
     };
     private TexturedNumber levelNumbers[];
     private int currentLevel;
