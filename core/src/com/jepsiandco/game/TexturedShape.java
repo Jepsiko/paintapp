@@ -144,10 +144,10 @@ class TexturedShape extends Shape {
     float getPercentageOfSuccess(Shape inputShape) {
 
         float count = 0;
-        float thickness = getThickness() + getStrokeThickness();
+        float thickness = getThickness();
 
         for (Vector3 point : inputShape.getShape()) // If we draw too far from the shape, it doesn't count
-            if (!isPointInShape(point, this, thickness*1.5f)) return 0;
+            if (!isPointInShape(point, this, thickness*2)) return 0;
 
         for (Vector3 point : getShape())
             if (isPointInShape(point, inputShape, thickness)) count++;
