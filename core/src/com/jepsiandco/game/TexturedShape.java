@@ -45,7 +45,7 @@ class TexturedShape extends Shape {
         texture = new Texture(Gdx.files.internal("food/" + filename + ".png"));
         sprite = new Sprite(texture);
         sprite.setAlpha(0);
-        sprite.setBounds((FastDraw.width-widthTexture)/2, (FastDraw.height-heightTexture)/2,
+        sprite.setBounds((FastDraw.width - widthTexture) / 2, (FastDraw.height - heightTexture) / 2,
                 widthTexture, heightTexture);
     }
 
@@ -117,10 +117,10 @@ class TexturedShape extends Shape {
             float initialPercentSize = 0.4f; // Value must be between 0 and 1
 
             float coef = min((float) currentTimeTexture / (float) animationTimeTexture, 1);
-            float width = widthTexture * (coef * (1- initialPercentSize) + initialPercentSize);
-            float height = heightTexture * (coef * (1- initialPercentSize) + initialPercentSize);
-            float x = (FastDraw.width-width)/2;
-            float y = (FastDraw.height-height)/2;
+            float width = widthTexture * (coef * (1 - initialPercentSize) + initialPercentSize);
+            float height = heightTexture * (coef * (1 - initialPercentSize) + initialPercentSize);
+            float x = (FastDraw.width - width) / 2;
+            float y = (FastDraw.height - height) / 2;
             sprite.setBounds(x, y, width, height);
             sprite.setAlpha(coef);
 
@@ -131,11 +131,11 @@ class TexturedShape extends Shape {
         }
     }
 
-    boolean isWinned () {
+    boolean isWinned() {
         return winned;
     }
 
-    void render (SpriteBatch batch) {
+    void render(SpriteBatch batch) {
         batch.begin();
         sprite.draw(batch);
         batch.end();
@@ -143,24 +143,9 @@ class TexturedShape extends Shape {
 
     float getPercentageOfSuccess(Shape inputShape) {
 
-        float distSq = inputShape.getThickness() + inputShape.getStrokeThickness();
-        distSq *= distSq;
-
-        boolean tooFar = true;
         float count = 0;
         for (Vector3 point : getShape()) {
-            for (Vector3 pointShape: inputShape.getShape()) {
-                if (point.dst2(pointShape) <= distSq*2) {
-                    tooFar = false;
-                    if (point.dst2(pointShape) <= distSq)  {
-                        count ++;
-                    }
-                    break;
-                }
-
-            }
-
-            if (tooFar) return 0;
+            if (isPointInShape(point, inputShape)) count++;
         }
 
         return count / getShape().size;
@@ -168,5 +153,33 @@ class TexturedShape extends Shape {
 
     void dispose() {
         texture.dispose();
+    }
+
+    private static boolean isPointInShape(Vector3 point, Shape shape) {
+        Vector3 current;
+        Vector3 previous = shape.getShape().first();
+        for (int i = 1; i < shape.getShape().size; i++) {
+            current = shape.getShape().get(i);
+            if (isPointInRectLine(point, previous.x, previous.y, current.x, current.y, 4 + 7)) return true;
+            previous = current;
+        }
+
+        return false;
+    }
+
+    private static boolean isPointInRectLine(Vector3 point, float x1, float y1, float x2, float y2, float thickness) {
+        Vector3 a = new Vector3(x1, y1, 0);
+        Vector3 b = new Vector3(x2, y2, 0);
+        return distToLineSquared(point, a, b) <= thickness * thickness;
+    }
+
+    private static float distToLineSquared(Vector3 p, Vector3 a, Vector3 b) {
+        float lineDist = a.dst2(b);
+        if (lineDist == 0) return p.dst2(a); // If 'a' and 'b' are the same point
+
+        float t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / lineDist;
+        t = Math.min(Math.max(t, 0), 1);
+
+        return p.dst2(a.x + t * (b.x - a.x), a.y + t * (b.y - a.y), 0);
     }
 }

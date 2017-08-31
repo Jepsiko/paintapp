@@ -136,13 +136,13 @@ public class FastDrawLevel implements Screen {
             if (drawingShape && shape.getSize() > 0) {
                 drawingShape = false;
 
-                float success = food.getPercentageOfSuccess(shape); // TODO : improve this function
+                float success = food.getPercentageOfSuccess(shape);
 
-                if (success > 0.6f) {
-                    if (success > 0.9f) {
+                if (success > 0.8f) {
+                    if (success > 0.95f) {
                         food.winAnimation(); // TODO: perfect animation
                         score += 200;
-                    } else if (success > 0.75f) {
+                    } else if (success > 0.9f) {
                         food.winAnimation(); // TODO: great animation
                         score += 100;
                     } else {
