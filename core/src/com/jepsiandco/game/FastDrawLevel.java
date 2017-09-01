@@ -6,6 +6,8 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -34,6 +36,13 @@ public class FastDrawLevel implements Screen {
     private int score = 0;
     private TexturedNumber texturedScore;
     private int foodDone = 0;
+
+    private final Texture stars[] = {
+            new Texture(Gdx.files.internal("stars/yellow-star.png")),
+            new Texture(Gdx.files.internal("stars/orange-star.png")),
+            new Texture(Gdx.files.internal("stars/red-star.png")),
+            new Texture(Gdx.files.internal("stars/grey-star.png"))
+    };
 
     private final int levelNumber;
     private int starsScore[];
@@ -112,8 +121,24 @@ public class FastDrawLevel implements Screen {
         game.shapeRenderer.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        texturedScore.draw(game.batch, FastDraw.width / 2, FastDraw.height - 100, 100, 60);
-        game.font.draw(game.batch, "Timer : " + levelTimer, 20, FastDraw.height - 40);
+        float charSize = 80;
+        float margin = charSize*0.6f;
+        texturedScore.draw(game.batch, 150, FastDraw.height - 100, charSize, margin);
+        game.font.draw(game.batch, "Timer : " + levelTimer, 20, FastDraw.height - 60);
+
+        // Draw the score bar stars
+        int barWidth = 200;
+        Sprite star;
+        float x;
+        for (int i = 2; i >= 0; i--) {
+            x = 50 + barWidth * starsScore[i] / starsScore[2];
+            if (score > starsScore[i])
+                star = new Sprite(stars[i]);
+            else
+                star = new Sprite(stars[3]);
+            star.setBounds(x, FastDraw.height-50, 30, 30);
+            star.draw(game.batch);
+        }
         game.batch.end();
 
         food.update();  // TODO : make a thread for each animation and try to not call update anymore

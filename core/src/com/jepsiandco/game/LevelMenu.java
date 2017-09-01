@@ -100,22 +100,24 @@ class LevelMenu implements Screen {
 
 
                 // Draw the stars
-                final int startCount = Character.getNumericValue(starsAndScore.charAt(0));
+                final int starsCount = Character.getNumericValue(starsAndScore.charAt(0));
                 final int starSizes[] = {90, 110, 90};
                 final float yOffsets[] = {0.5f, 0.6f, 0.5f};
                 final float xOffsets[] = {0.8f, 0, -0.8f};
                 final int angle = 20;
 
                 Sprite star;
+                float currentSize;
                 for (int j = 2; j >= 0; j--) {
-                    if (startCount > j)
+                    if (starsCount > j)
                         star = new Sprite(stars[j]);
                     else
                         star = new Sprite(stars[3]);
+                    currentSize = size * starSizes[j] / charSize;
 
-                    star.setBounds(x-starSizes[j]/2 - starSizes[j]*xOffsets[j],
-                            y + size*yOffsets[j], starSizes[j], starSizes[j]);
-                    star.setOrigin(starSizes[j]/2, starSizes[j]/2);
+                    star.setBounds(x-currentSize/2 - currentSize*xOffsets[j],
+                            y + size*yOffsets[j], currentSize, currentSize);
+                    star.setOrigin(currentSize/2, currentSize/2);
                     star.rotate(angle * (j-1));
                     star.draw(game.batch);
                 }
