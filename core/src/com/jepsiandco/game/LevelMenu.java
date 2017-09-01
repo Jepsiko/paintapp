@@ -17,10 +17,12 @@ class LevelMenu implements Screen {
 
     private OrthographicCamera camera;
     private final Sprite playButton;
-    private final Texture yellowStar;
-    private final Texture orangeStar;
-    private final Texture redStar;
-    private final Texture greyStar;
+    private final Texture stars[] = {
+            new Texture(Gdx.files.internal("stars/yellow-star.png")),
+            new Texture(Gdx.files.internal("stars/orange-star.png")),
+            new Texture(Gdx.files.internal("stars/red-star.png")),
+            new Texture(Gdx.files.internal("stars/grey-star.png"))
+    };
 
     /*
     0 : Cheese
@@ -51,10 +53,6 @@ class LevelMenu implements Screen {
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
         playButton = new Sprite(new Texture(Gdx.files.internal("buttons/play-button.png")));
         playButton.setBounds((FastDraw.width-300)/2, 50, 300, 100);
-        yellowStar = new Texture(Gdx.files.internal("stars/yellow-star.png"));
-        orangeStar = new Texture(Gdx.files.internal("stars/orange-star.png"));
-        redStar = new Texture(Gdx.files.internal("stars/red-star.png"));
-        greyStar = new Texture(Gdx.files.internal("stars/grey-star.png"));
 
         levelNumbers = new TexturedNumber[levels.length];
         for (int i = 0; i < levelNumbers.length; i++) {
@@ -102,7 +100,7 @@ class LevelMenu implements Screen {
 
 
                 // Draw the stars
-                int stars = Character.getNumericValue(starsAndScore.charAt(0));
+                int startCount = Character.getNumericValue(starsAndScore.charAt(0));
 
                 int middleStarSize = 110;
                 float middleStarYOffset = 0.6f;
@@ -113,28 +111,28 @@ class LevelMenu implements Screen {
                 float sideStarsXOffset = 0.8f;
 
                 Sprite star;
-                if (stars > 2)
-                    star = new Sprite(redStar);
+                if (startCount > 2)
+                    star = new Sprite(stars[2]);
                 else
-                    star = new Sprite(greyStar);
+                    star = new Sprite(stars[3]);
                 star.setBounds(x-sideStarsSize/2 + sideStarsSize*sideStarsXOffset,
                         y + size*sideStarsYOffset, sideStarsSize, sideStarsSize);
                 star.setOrigin(sideStarsSize/2, sideStarsSize/2);
                 star.rotate(-sideStarsAngle);
                 star.draw(game.batch);
 
-                if (stars > 1)
-                    star = new Sprite(orangeStar);
+                if (startCount > 1)
+                    star = new Sprite(stars[1]);
                 else
-                    star = new Sprite(greyStar);
+                    star = new Sprite(stars[3]);
                 star.setBounds(x-middleStarSize/2,
                         y + size*middleStarYOffset, middleStarSize, middleStarSize);
                 star.draw(game.batch);
 
-                if (stars > 0)
-                    star = new Sprite(yellowStar);
+                if (startCount > 0)
+                    star = new Sprite(stars[0]);
                 else
-                    star = new Sprite(greyStar);
+                    star = new Sprite(stars[3]);
                 star.setBounds(x-sideStarsSize/2 - sideStarsSize*sideStarsXOffset,
                         y + size*sideStarsYOffset, sideStarsSize, sideStarsSize);
                 star.setOrigin(sideStarsSize/2, sideStarsSize/2);
@@ -212,9 +210,10 @@ class LevelMenu implements Screen {
         for (TexturedNumber levelNumber: levelNumbers) {
             levelNumber.dispose();
         }
-        yellowStar.dispose();
-        orangeStar.dispose();
-        redStar.dispose();
+
+        for (Texture star : stars) {
+            star.dispose();
+        }
     }
 
     private int roundFloatToInt(float number) {
