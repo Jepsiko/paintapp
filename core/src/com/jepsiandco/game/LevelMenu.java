@@ -95,49 +95,30 @@ class LevelMenu implements Screen {
 
                 String starsAndScore = prefs.getString(String.valueOf(i), "0 0");
 
-                int bestScore = Integer.parseInt(starsAndScore.substring(2));
+                final int bestScore = Integer.parseInt(starsAndScore.substring(2));
                 if (bestScore > 0) game.font.draw(game.batch, "Best Score : " + bestScore, x, y - size*0.6f);
 
 
                 // Draw the stars
-                int startCount = Character.getNumericValue(starsAndScore.charAt(0));
-
-                int middleStarSize = 110;
-                float middleStarYOffset = 0.6f;
-
-                int sideStarsSize = 90;
-                int sideStarsAngle = 20;
-                float sideStarsYOffset = 0.5f;
-                float sideStarsXOffset = 0.8f;
+                final int startCount = Character.getNumericValue(starsAndScore.charAt(0));
+                final int starSizes[] = {90, 110, 90};
+                final float yOffsets[] = {0.5f, 0.6f, 0.5f};
+                final float xOffsets[] = {0.8f, 0, -0.8f};
+                final int angle = 20;
 
                 Sprite star;
-                if (startCount > 2)
-                    star = new Sprite(stars[2]);
-                else
-                    star = new Sprite(stars[3]);
-                star.setBounds(x-sideStarsSize/2 + sideStarsSize*sideStarsXOffset,
-                        y + size*sideStarsYOffset, sideStarsSize, sideStarsSize);
-                star.setOrigin(sideStarsSize/2, sideStarsSize/2);
-                star.rotate(-sideStarsAngle);
-                star.draw(game.batch);
+                for (int j = 2; j >= 0; j--) {
+                    if (startCount > j)
+                        star = new Sprite(stars[j]);
+                    else
+                        star = new Sprite(stars[3]);
 
-                if (startCount > 1)
-                    star = new Sprite(stars[1]);
-                else
-                    star = new Sprite(stars[3]);
-                star.setBounds(x-middleStarSize/2,
-                        y + size*middleStarYOffset, middleStarSize, middleStarSize);
-                star.draw(game.batch);
-
-                if (startCount > 0)
-                    star = new Sprite(stars[0]);
-                else
-                    star = new Sprite(stars[3]);
-                star.setBounds(x-sideStarsSize/2 - sideStarsSize*sideStarsXOffset,
-                        y + size*sideStarsYOffset, sideStarsSize, sideStarsSize);
-                star.setOrigin(sideStarsSize/2, sideStarsSize/2);
-                star.rotate(sideStarsAngle);
-                star.draw(game.batch);
+                    star.setBounds(x-starSizes[j]/2 - starSizes[j]*xOffsets[j],
+                            y + size*yOffsets[j], starSizes[j], starSizes[j]);
+                    star.setOrigin(starSizes[j]/2, starSizes[j]/2);
+                    star.rotate(angle * (j-1));
+                    star.draw(game.batch);
+                }
             }
         }
         playButton.draw(game.batch);
