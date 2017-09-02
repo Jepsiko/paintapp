@@ -28,7 +28,6 @@ public class FastDrawLevel implements Screen {
     };
 
     private TexturedShape food;
-    private Texture targetFood;
 
     private Shape shape;
     private Vector3 currentPoint;
@@ -37,6 +36,8 @@ public class FastDrawLevel implements Screen {
     private int score = 0;
     private TexturedNumber texturedScore;
     private int foodDone = 0;
+
+    private final Texture foodTextures[];
 
     private final Texture stars[] = {
             new Texture(Gdx.files.internal("stars/yellow-star.png")),
@@ -70,7 +71,10 @@ public class FastDrawLevel implements Screen {
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
 
         food = new TexturedShape(foods[this.level[foodDone]], 300, 300);
-        targetFood = new Texture(Gdx.files.internal("food/" + foods[this.level[foodDone]] + ".png"));
+        foodTextures = new Texture[foods.length];
+        for (int i = 0; i < foods.length; i++) {
+            foodTextures[i] = new Texture(Gdx.files.internal("food/" + foods[i] + ".png"));
+        }
 
         shape = new Shape();
         currentPoint = new Vector3();
@@ -86,8 +90,6 @@ public class FastDrawLevel implements Screen {
     @Override
     public void render(float delta) {
         if (food.isWon()) {
-            food.dispose();
-            targetFood.dispose();
             if (foodDone >= level.length - 1) {
 
                 // TODO : show stars earned from score
@@ -101,7 +103,6 @@ public class FastDrawLevel implements Screen {
             } else {
                 foodDone++;
                 food = new TexturedShape(foods[level[foodDone]], 300, 300);
-                targetFood = new Texture(Gdx.files.internal("food/" + foods[level[foodDone]] + ".png"));
             }
         }
 
@@ -112,8 +113,6 @@ public class FastDrawLevel implements Screen {
         }
 
         if (levelTimer == 0) { // Lost
-            food.dispose();
-            targetFood.dispose();
             game.setScreen(new LevelMenu(game));
             dispose();
         }
@@ -132,7 +131,7 @@ public class FastDrawLevel implements Screen {
         game.font.draw(game.batch, "Timer : " + levelTimer, 20, FastDraw.height - 60);
 
         // Draw the target food
-        Sprite targetFoodSprite = new Sprite(targetFood);
+        Sprite targetFoodSprite = new Sprite(foodTextures[level[foodDone]]);
         targetFoodSprite.setBounds(70, FastDraw.height*3/5, 150, 150);
         targetFoodSprite.draw(game.batch);
 
@@ -190,10 +189,10 @@ public class FastDrawLevel implements Screen {
                 float success = food.getPercentageOfSuccess(shape);
 
                 if (success > 0.85f) {
-                    if (success > 0.98f) {
+                    if (success > 0.99f) {
                         food.winAnimation(); // TODO: perfect animation
                         score += 200;
-                    } else if (success > 0.93f) {
+                    } else if (success > 0.95f) {
                         food.winAnimation(); // TODO: great animation
                         score += 100;
                     } else {
@@ -235,7 +234,10 @@ public class FastDrawLevel implements Screen {
 
     @Override
     public void dispose() {
+        food.dispose();
 
+        for (Texture foodTexture : foodTextures)
+            foodTexture.dispose();
     }
 
     private void lost() {

@@ -16,7 +16,7 @@ class LevelMenu implements Screen {
     private boolean justEnteredScreen = true;
 
     private OrthographicCamera camera;
-    private final Sprite playButton;
+    private final Texture playButton;
     private final Texture stars[] = {
             new Texture(Gdx.files.internal("stars/yellow-star.png")),
             new Texture(Gdx.files.internal("stars/orange-star.png")),
@@ -52,8 +52,7 @@ class LevelMenu implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, FastDraw.width, FastDraw.height);
-        playButton = new Sprite(new Texture(Gdx.files.internal("buttons/play-button.png")));
-        playButton.setBounds((FastDraw.width-300)/2, 50, 300, 100);
+        playButton = new Texture(Gdx.files.internal("buttons/play-button.png"));
 
         levelNumbers = new TexturedNumber[levels.length];
         for (int i = 0; i < levelNumbers.length; i++) {
@@ -124,7 +123,9 @@ class LevelMenu implements Screen {
                 }
             }
         }
-        playButton.draw(game.batch);
+        Sprite playButtonSprite = new Sprite(playButton);
+        playButtonSprite.setBounds((FastDraw.width-300)/2, 50, 300, 100);
+        playButtonSprite.draw(game.batch);
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
@@ -134,7 +135,7 @@ class LevelMenu implements Screen {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touchPos);
 
-            if (playButton.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
+            if (playButtonSprite.getBoundingRectangle().contains(touchPos.x, touchPos.y)) {
                 game.setScreen(new FastDrawLevel(game, levels[currentLevel], currentLevel));
                 dispose();
 
@@ -198,6 +199,8 @@ class LevelMenu implements Screen {
         for (Texture star : stars) {
             star.dispose();
         }
+
+        playButton.dispose();
     }
 
     private int roundFloatToInt(float number) {
