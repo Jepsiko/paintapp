@@ -39,7 +39,7 @@ class LevelMenu implements Screen {
             {300, 500, 700, 45, 1, 2, 0, 1, 0, 2, 1},
             {300, 500, 700, 50, 3, 2, 4, 1, 3, 2, 5},
             {300, 500, 700, 30, 5, 0, 1, 5, 5, 0, 1},
-            {300, 500, 700, 100, 0, 1, 2, 3, 4, 5},
+            {300, 500, 700, 50, 0, 1, 2, 3, 4, 5},
     };
     private TexturedNumber levelNumbers[];
     private int currentLevel;
@@ -96,8 +96,8 @@ class LevelMenu implements Screen {
 
                 String starsAndScore = prefs.getString(String.valueOf(i), "0 0");
 
-                final int bestScore = Integer.parseInt(starsAndScore.substring(2));
-                if (bestScore > 0) game.font.draw(game.batch, "Best Score : " + bestScore, x, y - size*0.6f);
+                //final int bestScore = Integer.parseInt(starsAndScore.substring(2));
+                //if (bestScore > 0) game.font.draw(game.batch, "Best Score : " + bestScore, x, y - size*0.6f);
 
 
                 // Draw the stars
@@ -119,7 +119,7 @@ class LevelMenu implements Screen {
                     star.setBounds(x-currentSize/2 - currentSize*xOffsets[j],
                             y + size*yOffsets[j], currentSize, currentSize);
                     star.setOrigin(currentSize/2, currentSize/2);
-                    star.rotate(angle * (j-1));
+                    star.rotate((-angle * (j-1)));
                     star.draw(game.batch);
                 }
             }
