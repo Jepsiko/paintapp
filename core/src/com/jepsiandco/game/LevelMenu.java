@@ -39,6 +39,7 @@ class LevelMenu implements Screen {
             {300, 500, 700, 45, 1, 2, 0, 1, 0, 2, 1},
             {300, 500, 700, 50, 3, 2, 4, 1, 3, 2, 5},
             {300, 500, 700, 30, 5, 0, 1, 5, 5, 0, 1},
+            {300, 500, 700, 100, 0, 1, 2, 3, 4, 5},
     };
     private TexturedNumber levelNumbers[];
     private int currentLevel;

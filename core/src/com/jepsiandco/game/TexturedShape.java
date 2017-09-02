@@ -45,8 +45,6 @@ class TexturedShape extends Shape {
         texture = new Texture(Gdx.files.internal("food/" + filename + ".png"));
         sprite = new Sprite(texture);
         sprite.setAlpha(0);
-        sprite.setBounds((FastDraw.width - widthTexture) / 2, (FastDraw.height - heightTexture) / 2,
-                widthTexture, heightTexture);
     }
 
     private void initShape(String filename) {
@@ -120,7 +118,7 @@ class TexturedShape extends Shape {
             float width = widthTexture * (coef * (1 - initialPercentSize) + initialPercentSize);
             float height = heightTexture * (coef * (1 - initialPercentSize) + initialPercentSize);
             float x = (FastDraw.width - width) / 2;
-            float y = (FastDraw.height - height) / 2;
+            float y = (FastDraw.height - height) / 2 - 100;
             sprite.setBounds(x, y, width, height);
             sprite.setAlpha(coef);
 

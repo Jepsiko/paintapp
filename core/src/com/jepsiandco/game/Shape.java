@@ -86,7 +86,7 @@ class Shape {
                     shape.pop();
                 }
 
-                //System.err.println("new Vector3(" + (int)point.x + ", " + (int)point.y + ", 0),");
+                //System.err.println("new Vector3(" + (int)point.x + ", " + (int)point.y + ", 0),"); // For making the shape
                 shape.add(point);
             }
         }
