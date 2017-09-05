@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -38,13 +39,14 @@ public class FastDrawLevel implements Screen {
     private int foodDone = 0;
 
     private final Texture foodTextures[];
-
     private final Texture stars[] = {
             new Texture(Gdx.files.internal("stars/yellow-star.png")),
             new Texture(Gdx.files.internal("stars/orange-star.png")),
             new Texture(Gdx.files.internal("stars/red-star.png")),
             new Texture(Gdx.files.internal("stars/grey-star.png"))
     };
+    private final Texture emptyProgressBar = new Texture(Gdx.files.internal("nine-patches/empty-progress-bar.png"));
+    private final Texture filledProgressBar = new Texture(Gdx.files.internal("nine-patches/filled-progress-bar.png"));
 
     private final int levelNumber;
     private int starsScore[];
@@ -135,20 +137,37 @@ public class FastDrawLevel implements Screen {
         targetFoodSprite.setBounds(70, FastDraw.height*3/5, 150, 150);
         targetFoodSprite.draw(game.batch);
 
+
+        // Draw the score bar
+        final int barWidth = 250;
+        final int barHeight = 15;
+        final float x = 30;
+        final float y = FastDraw.height-40;
+        NinePatch emptyProgressBarPatch = new NinePatch(emptyProgressBar, 4, 4, 4, 4);
+        emptyProgressBarPatch.draw(game.batch, x, y, barWidth, barHeight);
+        NinePatch filledProgressBarPatch = new NinePatch(filledProgressBar, 4, 4, 4, 4);
+        if (score > starsScore[2])
+            filledProgressBarPatch.draw(game.batch, x, y, barWidth, barHeight);
+        else if (score != 0)
+            filledProgressBarPatch.draw(game.batch, x, y, barWidth * score / starsScore[2], barHeight);
+
+
+
         // Draw the score bar stars
-        int barWidth = 200;
         Sprite star;
-        float x;
+        final int starSize = barHeight*3;
         for (int i = 2; i >= 0; i--) {
-            x = 50 + barWidth * starsScore[i] / starsScore[2];
             if (score > starsScore[i])
                 star = new Sprite(stars[i]);
             else
                 star = new Sprite(stars[3]);
-            star.setBounds(x, FastDraw.height-50, 30, 30);
+            star.setBounds(x + barWidth * starsScore[i] / starsScore[2] - starSize/2,
+                    y - starSize/2 + barHeight/2, starSize, starSize);
             star.draw(game.batch);
         }
         game.batch.end();
+
+
 
         food.update();  // TODO : make a thread for each animation and try to not call update anymore
         // Like Playing a music for example
