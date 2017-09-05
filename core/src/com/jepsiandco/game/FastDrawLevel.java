@@ -127,15 +127,26 @@ public class FastDrawLevel implements Screen {
         game.shapeRenderer.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
+
+
+
+        // Draw the score
         float charSize = 80;
         float margin = charSize*0.6f;
         texturedScore.draw(game.batch, 150, FastDraw.height - 100, charSize, margin);
+
+
+
+        // Draw the timer
         game.font.draw(game.batch, "Timer : " + levelTimer, 20, FastDraw.height - 60);
+
+
 
         // Draw the target food
         Sprite targetFoodSprite = new Sprite(foodTextures[level[foodDone]]);
         targetFoodSprite.setBounds(70, FastDraw.height*3/5, 150, 150);
         targetFoodSprite.draw(game.batch);
+
 
 
         // Draw the score bar
